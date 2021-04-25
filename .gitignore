@@ -1,0 +1,4 @@
+entropy-sgd/wandb/
+entropy-sgd/proc/
+proc/
+entropy-sgd/__pycache__/
