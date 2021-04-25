@@ -69,11 +69,8 @@ optional arguments:
                         mode of the wandb logger
 ```
 
-4. Requisitos faltantes no container:
-
-pip install --upgrade torch torchvision
-
-5. Reinicialização do container
+4. Reinicialização do container
 
 `sudo systemctl daemon-reload`
+
 `sudo systemctl restart docker`
