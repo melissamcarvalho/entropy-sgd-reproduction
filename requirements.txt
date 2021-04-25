@@ -1,0 +1,12 @@
+scikit-learn
+setuptools>=41.0.0
+numpy>=1.15.4
+six>=1.13.0
+scikit-plot
+seaborn
+ipdb
+tensorboardX
+tensorboard
+dataclasses
+wandb
+cython
