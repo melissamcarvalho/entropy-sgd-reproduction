@@ -28,12 +28,26 @@ class BaseLogger(object):
         **{'complexity/{}'.format(k.name): v for k,v in all_complexities.items()}
       })
 
-  def log_epoch_end(self, epoch: int, datasubset: DatasetSubsetType, avg_loss: float, acc: float) -> None:
+  def log_all_epochs(self, epoch: int, datasubset: DatasetSubsetType, avg_loss: float, acc: float) -> None:
     self.log_metrics(
       epoch,
       {
         'cross_entropy/{}'.format(datasubset.name.lower()): avg_loss,
         'accuracy/{}'.format(datasubset.name.lower()): acc,
+      })
+
+  def log_gamma(self, epoch: int, datasubset: DatasetSubsetType, gamma: float):
+    self.log_metrics(
+      epoch,
+      {
+        'gamma/{}'.format(datasubset.name.lower()): gamma,
+      })
+
+  def log_lr(self, epoch: int, datasubset: DatasetSubsetType, lr: float):
+    self.log_metrics(
+      epoch,
+      {
+        'learning_rate/{}'.format(datasubset.name.lower()): lr,
       })
 
 
