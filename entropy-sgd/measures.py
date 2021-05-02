@@ -149,6 +149,18 @@ def get_flat_measure(
   measures[CT.PACBAYES_ORIG] = _pacbayes_bound(w_vec) # 49
   measures[CT.PACBAYES_FLATNESS] = torch.tensor(1 / sigma ** 2) # 53
 
+  print("Magnitude-aware Perturbation Bounds")
+  mag_eps = 1e-3
+  mag_sigma = _pacbayes_sigma(model, dataloader, acc, seed, mag_eps)
+  omega = num_params
+  def _pacbayes_mag_bound(reference_vec: Tensor) -> Tensor:
+    numerator = mag_eps ** 2 + (mag_sigma ** 2 + 1) * (reference_vec.norm(p=2)**2) / omega
+    denominator = mag_eps ** 2 + mag_sigma ** 2 * dist_w_vec ** 2
+    return 1/4 * (numerator / denominator).log().sum() + math.log(m / mag_sigma) + 10
+  measures[CT.PACBAYES_MAG_INIT] = _pacbayes_mag_bound(dist_w_vec) # 56
+  measures[CT.PACBAYES_MAG_ORIG] = _pacbayes_mag_bound(w_vec) # 57
+  measures[CT.PACBAYES_MAG_FLATNESS] = torch.tensor(1 / mag_sigma ** 2) # 61
+
   # Adjust for dataset size
   def adjust_measure(measure: CT, value: float) -> float:
     if measure.name.startswith('LOG_'):
