@@ -3,6 +3,7 @@ from copy import deepcopy
 import numpy as np
 import torch as th
 
+
 class EntropySGD(Optimizer):
     def __init__(self, params, config = {}):
 
@@ -103,4 +104,8 @@ class EntropySGD(Optimizer):
 
             w.data.add_(-lr, dw)
 
-        return mf,merr
+        # Update state t for gamma scoping
+        if self.state['gamma_scoping']:
+            self.state['t'] += 1
+
+        return mf, merr
