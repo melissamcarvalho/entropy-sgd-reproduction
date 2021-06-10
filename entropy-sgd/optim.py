@@ -60,6 +60,7 @@ class EntropySGD(Optimizer):
         state['debug'] = dict(wwpd=0, df=0, dF=0, g=0, eta=0)
         llr, beta1 = lp['lr'], lp['beta1']
         g = g0*(1+g1)**state['t']
+        self.gamma = g
 
         for i in range(L):
             f,_ = closure()
