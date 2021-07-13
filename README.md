@@ -1,20 +1,35 @@
-# Entropy-sgd-reproduction
+## Entropy-sgd-reproduction
 
-0. Gerar imagem Docker
+Os seguintes passos descrevem como a reprodução dos resultados do
+paper [Entropy-SGD: Biasing Gradient Descent Into Wide Valleys](https://arxiv.org/abs/1611.01838)
+foi realizada.
+
+### Definição de ambiente
+
+* Gerar imagem Docker
 
 ```
 docker build -t reproduction:0.1.0 .
 ```
 
-1. Executar container
+* Executar container
 
 ```
 docker run -it --rm -v /home/jbflorindo/entropy-sgd-reproduction:/entropy-reproduction --gpus=all --name="cifar_reproduction" -p 8888:8888 --ipc="host" reproduction:0.1.0
 ```
 
-2. python process_cifar.py -d ../cifar-10-python/
+### Processamento dos dados
 
-3. Exemplo de execução básica
+No paper, considera-se que o seguinte pipeline de pré-processamento deva ser
+executado.
+
+```
+python process_cifar.py -d ../cifar-10-python/
+```
+
+Os resultados devem ficar salvos no diretório `proc`.
+
+### Execução básica para treinamento
 
 ```
 bash
@@ -69,7 +84,20 @@ optional arguments:
                         mode of the wandb logger
 ```
 
-4. Reinicialização do container
+### Gerar gráficos
+
+Os dados salvos pela ferramenta weights and biases foram baixados
+e salvos em `WANDB_RESULTS`. Os gráficos de interesse foram gerados
+por meio do notebook `notebooks/1_wandb_plots_cifar.ipynb`
+
+Para habilitar o notebook dentro do container, execute o seguinte
+comando:
+
+`jupyter notebook --ip 0.0.0.0 --no-browser --allow-root`
+
+### Common issues
+
+* Restart container
 
 `sudo systemctl daemon-reload`
 
