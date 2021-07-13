@@ -2,3 +2,5 @@ entropy-sgd/wandb/
 entropy-sgd/proc/
 proc/
 entropy-sgd/__pycache__/
+entropy-sgd/.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
