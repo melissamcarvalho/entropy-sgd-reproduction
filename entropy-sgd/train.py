@@ -263,7 +263,6 @@ def set_dropout(cache = None, p=0):
                 assert len(cache) > 0, 'cache is empty'
                 l.p = cache.pop(0)
 
-
 def dry_feed():
     cache = set_dropout()
     maxb = int(math.ceil(train_loader.n/opt['b']))

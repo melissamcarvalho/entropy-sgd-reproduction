@@ -3,7 +3,6 @@ from copy import deepcopy
 import numpy as np
 import torch as th
 
-
 class EntropySGD(Optimizer):
     def __init__(self, params, config = {}):
 

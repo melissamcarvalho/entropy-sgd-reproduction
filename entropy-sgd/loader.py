@@ -40,7 +40,6 @@ class sampler_t:
     def __iter__(self):
         return self
 
-
 def mnist(opt):
     d1, d2 = datasets.MNIST('../proc', download=True, train=True), \
             datasets.MNIST('../proc', train=False)
