@@ -68,41 +68,41 @@ class EntropySGD(Optimizer):
                 dw = w.grad.data
 
                 if wd > 0:
-                    dw.add_(wd, w.data)
+                    dw.add_(other=w.data, alpha=wd)
                 if mom > 0:
-                    mdw.mul_(mom).add_(1-damp, dw)
+                    mdw.mul_(mom).add_(other=dw, alpha=1-damp)
                     if nesterov:
-                        dw.add_(mom, mdw)
+                        dw.add_(other=mdw, alpha=mom)
                     else:
                         dw = mdw
 
                 # add noise
                 eta.normal_()
-                dw.add_(-g, wc-w.data).add_(eps/np.sqrt(0.5*llr), eta)
+                dw.add_(other=wc-w.data, alpha=-g).add_(other=eta, alpha=eps/np.sqrt(0.5*llr))
 
                 # update weights
-                w.data.add_(-llr, dw)
-                mw.mul_(beta1).add_(1-beta1, w.data)
+                w.data.add_(other=dw, alpha=-llr)
+                mw.mul_(beta1).add_(other=w.data, alpha=1-beta1)
 
         if L > 0:
             # copy model back
-            for i,w in enumerate(params):
+            for i, w in enumerate(params):
                 w.data.copy_(state['wc'][i])
                 w.grad.data.copy_(w.data-lp['mw'][i])
 
-        for w,mdw,mw in zip(params, state['mdw'], lp['mw']):
+        for w, mdw, mw in zip(params, state['mdw'], lp['mw']):
             dw = w.grad.data
 
             if wd > 0:
-                dw.add_(wd, w.data)
+                dw.add_(other=w.data, alpha=wd)
             if mom > 0:
-                mdw.mul_(mom).add_(1-damp, dw)
+                mdw.mul_(mom).add_(other=dw, alpha=1-damp)
                 if nesterov:
-                    dw.add_(mom, mdw)
+                    dw.add_(other=mdw, alpha=mom)
                 else:
                     dw = mdw
 
-            w.data.add_(-lr, dw)
+            w.data.add_(other=dw, alpha=-lr)
 
         # Update state t for gamma scoping
         if self.state['gamma_scoping']:
