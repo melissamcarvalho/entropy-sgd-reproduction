@@ -1,8 +1,7 @@
-import time
-from typing import Dict, Optional
-
-from torch import Tensor
 import wandb
+
+from typing import Dict, Optional
+from torch import Tensor
 
 from experiment_config import (
   ComplexityType,
@@ -16,6 +15,9 @@ from experiment_config import (
 
 
 class BaseLogger(object):
+  """
+  Metrics logging
+  """
   def log_metrics(self, step: int, metrics: Dict[str, float]):
     raise NotImplementedError()
 
@@ -51,10 +53,39 @@ class BaseLogger(object):
         'learning_rate/{}'.format(datasubset.name.lower()): lr,
       })
 
+  def log_time(self, epoch: int, time: float):
+    self.log_metrics(
+      epoch,
+      {
+        'time': time,
+      })
+
+  def log_stop_criteria(self, epoch: int, criteria: int):
+    self.log_metrics(
+      epoch,
+      {
+        'stop_criteria': criteria,
+      })
+
+  def log_messages(self, epoch: int, message: str):
+    self.log_metrics(
+      epoch,
+      {
+        'messages': message,
+      })
+
 
 class WandbLogger(BaseLogger):
-  def __init__(self, tag: Optional[str] = None, hps: Optional[dict] = None, group: Optional[str] = None, mode: str='online'):
-    wandb.init(project='Entropy SGD Reproduction', config=hps, tags=[tag], group=group, mode=mode)
+  def __init__(self,
+               tag: Optional[str] = None,
+               hps: Optional[dict] = None,
+               group: Optional[str] = None,
+               mode: str='online'):
+    wandb.init(project='Entropy SGD Reproduction',
+               config=hps,
+               tags=[tag],
+               group=group,
+               mode=mode)
 
   def log_metrics(self, step: int, metrics: dict):
     wandb.log(metrics, step=step)
