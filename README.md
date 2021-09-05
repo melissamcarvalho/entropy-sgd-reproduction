@@ -15,7 +15,7 @@ docker build -t reproduction:0.1.0 .
 * Executar container
 
 ```
-docker run -it --rm -v /home/jbflorindo/entropy-sgd-reproduction:/entropy-reproduction --gpus=all --name="cifar_reproduction" -p 8888:8888 --ipc="host" reproduction:0.1.0
+docker run -it --rm -v /home/jbflorindo/CIFAR/entropy-sgd-reproduction:/entropy-reproduction --gpus=all --name="cifar_reproduction" -p 8888:8888 --ipc="host" reproduction:0.1.0
 ```
 
 ### Processamento dos dados
