@@ -74,6 +74,14 @@ class BaseLogger(object):
         'messages': message,
       })
 
+  def log_batch_correctness(self, epoch: int, tag: str, correct: int, total: int):
+    self.log_metrics(
+      epoch,
+      {
+        'batch_correctness/{}/correct'.format(tag): correct,
+        'batch_correctness/{}/batch'.format(tag): total
+      })
+
 
 class WandbLogger(BaseLogger):
   def __init__(self,
