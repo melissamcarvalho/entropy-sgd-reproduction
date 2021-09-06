@@ -20,6 +20,7 @@ from utils import AverageMeter, accuracy
 from measures import get_flat_measure
 from experiment_config import EvaluationMetrics, DatasetSubsetType
 from logger import WandbLogger
+from utils import check_models
 
 # Keeping the code as similar as the original one
 # Added the evaluation of the complexity measures
@@ -28,7 +29,7 @@ from logger import WandbLogger
 parser = argparse.ArgumentParser(description='PyTorch Entropy-SGD')
 ap = parser.add_argument
 ap('-m', help='mnistfc | mnistconv | allcnn', type=str, default='mnistconv')
-ap('-b', help='Train batch size', type=int, default=128)
+ap('-b', help='Train batch size', type=int, default=100)
 ap('-eval-b', help='Val, Test batch size', type=int, default=5000)
 ap('-B', help='Max epochs', type=int, default=100)
 ap('--lr', help='Learning rate', type=float, default=0.1)
@@ -123,6 +124,7 @@ end = th.cuda.Event(enable_timing=True)
 def evaluate_complexity_measures(model: nn.Module,
                                  init_model: nn.Module,
                                  device,
+                                 epoch: int,
                                  seed: int,
                                  dataset_subset_type: DatasetSubsetType,
                                  train_eval_loader: DataLoader,
@@ -134,6 +136,7 @@ def evaluate_complexity_measures(model: nn.Module,
 
     # Evaluates on the whole training set and with the current model
     loss, acc, num_correct = evaluate_cross_entropy(model,
+                                                    epoch,
                                                     device,
                                                     train_eval_loader,
                                                     val_loader,
@@ -158,6 +161,7 @@ def evaluate_complexity_measures(model: nn.Module,
 
 
 def evaluate_cross_entropy(model,
+                           epoch: int,
                            device: int,
                            train_eval_loader: DataLoader,
                            val_loader: DataLoader,
@@ -166,13 +170,16 @@ def evaluate_cross_entropy(model,
 
     data_loader = [train_eval_loader, val_loader][dataset_subset_type]
     bsz = data_loader.b
+    # Make sure that the loop starts on the beginning
+    data_loader.sidx = 0
     loss, acc = AverageMeter(), AverageMeter()
 
     for _ in range(data_loader.total_loops):
         data, target = next(data_loader)
         data, target = data.to(device), target.to(device)
         with th.no_grad():
-            data, target = Variable(data), Variable(target.squeeze())
+            data = Variable(data)
+            target = Variable(target.squeeze())
             yh = model(data)
             f = criterion.forward(yh, target).data.item()
             prec1 = accuracy(yh.data, target.data, topk=(1,))
@@ -183,6 +190,7 @@ def evaluate_cross_entropy(model,
     cross_entropy_loss = loss.avg
     avg_acc = acc.avg
     num_correct = acc.sum
+    logger.log_batch_correctness(epoch, 'eval-ce', num_correct, acc.count)
 
     return cross_entropy_loss, avg_acc, num_correct
 
@@ -193,33 +201,48 @@ def train(epoch, found_stop_epoch):
     fs, top1 = AverageMeter(), AverageMeter()
 
     bsz = opt['b']
+
+    # The floor function guarantees that we do not
+    # repeat samples over a given epoch
+    # If the number of samples is not divisible
+    # by the batch size, we leave some samples
+    # out of the loop
     maxb = int(math.floor(train_loader.n/bsz))
 
     start.record()
     for bi in range(maxb):
+        # closure to be passed to the optimizer
         def helper():
             def feval():
                 x, y = next(train_loader)
                 x, y = x.to(device), y.to(device)
-                x, y = Variable(x), Variable(y.squeeze())
+                x = Variable(x)
+                y = Variable(y.squeeze())
 
                 optimizer.zero_grad()
                 yh = model(x)
+                # computes the crossentropy loss
+                # nn.NLLLoss(reduction='mean')(nn.LogSoftmax()(yh), y)
                 f = criterion.forward(yh, y)
                 f.backward()
 
+                # computes the number of correct samples over
+                # the batch
                 prec1 = accuracy(yh.data, y.data, topk=(1,))
                 return (f.data.item(), prec1.item())
             return feval
 
         f, acc = optimizer.step(helper(), model, criterion)
 
+        # Average loss
         fs.update(f, bsz)
+        # Average number of correct values over the current
+        # number of batches analyzed
         top1.update(acc, bsz)
 
         if bi % opt['batch_step'] == 0 and bi != 0:
             print(f'[{epoch}][{bi}/{maxb}]'
-                  f'Mean Loss: {np.round(fs.avg, 2)}'
+                  f'Mean Loss: {np.round(fs.avg, 6)}'
                   f' Percentage Acc: {100*np.round(top1.avg, 4)}')
 
     scheduler.step()
@@ -234,9 +257,11 @@ def train(epoch, found_stop_epoch):
                   DatasetSubsetType.TRAIN,
                   optimizer.param_groups[0]['lr'])
 
+    logger.log_batch_correctness(epoch, 'train', top1.sum, top1.count)
+
     # Check if the complexity measure will be calculated
     # considering the two criterias: achievement of the
-    # epoch step or the minimum loss
+    # epoch step or achievement of the minimum loss
     evaluate_first_op = epoch % opt['epoch_step'] == 0 \
         or epoch == opt['B'] - 1
     evaluate_second_op = not found_stop_epoch and \
@@ -254,9 +279,11 @@ def train(epoch, found_stop_epoch):
     if evaluate_first_op or evaluate_second_op:
         msg = f'Evaluating complexity measures at epoch {epoch}.'
         logger.log_messages(epoch, msg)
+        model_before = deepcopy(model)
         train_eval = evaluate_complexity_measures(model,
                                                   init_model,
                                                   device,
+                                                  epoch,
                                                   opt['s'],
                                                   DatasetSubsetType.TRAIN,
                                                   train_eval_loader,
@@ -266,6 +293,7 @@ def train(epoch, found_stop_epoch):
         val_eval = evaluate_complexity_measures(model,
                                                 init_model,
                                                 device,
+                                                epoch,
                                                 opt['s'],
                                                 DatasetSubsetType.TEST,
                                                 train_eval_loader,
@@ -277,8 +305,18 @@ def train(epoch, found_stop_epoch):
                                       train_eval.avg_loss,
                                       val_eval.avg_loss,
                                       train_eval.all_complexities)
+        model_after = model
+        result = check_models(model_before, model_after)
+        if not result:
+            msg = 'Something is wrong in the complexity measures!'
+            logger.log_messages(epoch, msg)
+            raise Exception('The models are being manipulated wrong!')
+        else:
+            msg = 'Model is manipulated right inside the complexity measures!'
+            logger.log_messages(epoch, msg)
 
-    print(f'Train: [{epoch}] {np.round(fs.avg, 2)} {np.round(top1.avg, 2)}')
+    print(f'Train: [{epoch}]: Loss: {np.round(fs.avg, 6)},'
+          f' Pctg Acc: {100*np.round(top1.avg, 4)}')
     print()
     logger.log_all_epochs(epoch, DatasetSubsetType.TRAIN, fs.avg, top1.avg)
     logger.log_gamma(epoch, DatasetSubsetType.TRAIN, optimizer.gamma)
@@ -302,6 +340,10 @@ def set_dropout(cache=None, p=0):
 
 
 def dry_feed():
+    """
+    Dry feed for warming up the gpu
+    making sure it is not on stand by mode
+    """
     cache = set_dropout()
     maxb = int(math.floor(train_loader.n/opt['b']))
     for bi in range(maxb):
@@ -318,6 +360,9 @@ def val(e, data_loader):
     dry_feed()
     model.eval()
 
+    # Make sure to cover all samples from the beginning
+    data_loader.sidx = 0
+
     maxb = int(math.floor(data_loader.n/opt['b']))
 
     fs, top1 = AverageMeter(), AverageMeter()
@@ -327,7 +372,8 @@ def val(e, data_loader):
         bsz = x.size(0)
 
         with th.no_grad():
-            x, y = Variable(x), Variable(y.squeeze())
+            x = Variable(x)
+            y = Variable(y.squeeze())
             yh = model(x)
 
             f = criterion.forward(yh, y).data.item()
@@ -336,9 +382,11 @@ def val(e, data_loader):
         fs.update(f, bsz)
         top1.update(prec1.item(), bsz)
 
-    print(f'Test: [{e}] {fs.avg} {100*np.round(top1.avg, 4)}')
+    print(f'Test: [{e}], Loss: {np.round(fs.avg, 6)}, '
+          f' Pctg Acc: {100*np.round(top1.avg, 4)}')
     print()
     logger.log_all_epochs(epoch, DatasetSubsetType.TEST, fs.avg, top1.avg)
+    logger.log_batch_correctness(epoch, 'val', top1.sum, top1.count)
 
 
 found_stop_epoch = False
