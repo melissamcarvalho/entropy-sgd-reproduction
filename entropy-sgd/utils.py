@@ -35,3 +35,10 @@ def accuracy(output, target, topk=(1,)):
         correct_k = correct[:k].view(-1).float().sum(0)
 
     return correct_k
+
+
+def check_models(model1, model2):
+    for p1, p2 in zip(model1.parameters(), model2.parameters()):
+        if p1.data.ne(p2.data).sum().item() > 0:
+            return False
+    return True
