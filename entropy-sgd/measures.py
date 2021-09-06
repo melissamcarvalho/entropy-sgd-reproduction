@@ -1,15 +1,17 @@
-from contextlib import contextmanager
-from copy import deepcopy
-import math
-from typing import Dict, List, Optional, Tuple
-
 import numpy as np
 import torch
+import math
+
+from contextlib import contextmanager
+from copy import deepcopy
+from typing import Dict, List, Optional, Tuple
 from torch import Tensor
 from torch.utils.data.dataloader import DataLoader
+from torch.autograd import Variable
 
 from experiment_config import ComplexityType as CT
 from models import ExperimentBaseModel
+from utils import AverageMeter, accuracy
 
 
 # Adapted from https://github.com/bneyshabur/generalization-bounds/blob/master/measures.py
@@ -24,6 +26,7 @@ def _reparam(model):
         scale = child.weight / ((child.running_var + child.eps).sqrt())
         prev_layer.bias.copy_( child.bias  + ( scale * (prev_layer.bias - child.running_mean) ) )
         perm = list(reversed(range(prev_layer.weight.dim())))
+        # permute to match the dimensions and apply the scale
         prev_layer.weight.copy_((prev_layer.weight.permute(perm) * scale ).permute(perm))
         child.bias.fill_(0)
         child.weight.fill_(1)
@@ -60,7 +63,7 @@ def _perturbed_model(
 def _pacbayes_sigma(
   model: ExperimentBaseModel,
   dataloader: DataLoader,
-  accuracy: float,
+  acc: float,
   seed: int,
   magnitude_eps: Optional[float] = None,
   search_depth: int = 15,
@@ -87,17 +90,23 @@ def _pacbayes_sigma(
       print(f'Monte Carlo sample: {sample}')
       with _perturbed_model(model, sigma, rng, magnitude_eps) as p_model:
         loss_estimate = 0
-        for batch in range(dataloader.total_loops):
-          data, target = next(dataloader)
-          data = data.to(device)
-          target = target.to(device)
-          logits = p_model(data)
-          pred = logits.data.max(1, keepdim=True)[1]  # get the index of the max logits
-          batch_correct = pred.eq(target.data.view_as(pred)).type(torch.FloatTensor).cpu()
-          loss_estimate += batch_correct.sum()
-        loss_estimate /= dataloader.n
+        dataloader.sidx = 0
+        top1 = AverageMeter()
+        bsz = dataloader.b
+        for _ in range(dataloader.total_loops):
+          x, y = next(dataloader)
+          x, y = x.to(device), y.to(device)
+
+          with torch.no_grad():
+            x = Variable(x)
+            y = Variable(y.squeeze())
+            yh = model(x)
+            prec1 = accuracy(yh.data, y.data, topk=(1,))
+          top1.update(prec1.item(), bsz)
+        loss_estimate = top1.avg
+        print(f'the total number of samples is {top1.count}')
         accuracy_samples.append(loss_estimate)
-    displacement = abs(np.mean(accuracy_samples) - accuracy)
+    displacement = abs(np.mean(accuracy_samples) - acc)
     if abs(displacement - accuracy_displacement) < displacement_tolerance:
       break
     elif displacement > accuracy_displacement:
@@ -123,21 +132,24 @@ def get_flat_measure(
   init_model = _reparam(init_model)
 
   device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+  # Total number of samples
   m = dataloader.n
 
   def get_weights_only(model: ExperimentBaseModel) -> List[Tensor]:
-     blacklist = {'bias', 'bn'}
-     return [p for name, p in model.named_parameters() if all(x not in name for x in blacklist)]
+    blacklist = {'bias', 'bn'}
+    return [p for name, p in model.named_parameters() if all(x not in name for x in blacklist)]
 
   weights = get_weights_only(model)
-  dist_init_weights = [p-q for p,q in zip(weights, get_weights_only(init_model))]
+  dist_init_weights = [p - q for p, q in zip(weights,
+                                             get_weights_only(init_model))]
   d = len(weights)
 
   def get_vec_params(weights: List[Tensor]) -> Tensor:
-     return torch.cat([p.view(-1) for p in weights], dim=0)
+    return torch.cat([p.view(-1) for p in weights], dim=0)
 
-  w_vec = get_vec_params(weights)
   print('Get vec params')
+  w_vec = get_vec_params(weights)
   dist_w_vec = get_vec_params(dist_init_weights)
   num_params = len(w_vec)
 
