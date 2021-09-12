@@ -184,13 +184,16 @@ def evaluate_cross_entropy(model,
             f = criterion.forward(yh, target).data.item()
             prec1 = accuracy(yh.data, target.data, topk=(1,))
 
-        loss.update(f, bsz)
+        loss.update(f)
         acc.update(prec1.item(), bsz)
 
     cross_entropy_loss = loss.avg
     avg_acc = acc.avg
     num_correct = acc.sum
-    logger.log_batch_correctness(epoch, 'eval-ce', num_correct, acc.count)
+    logger.log_batch_correctness(epoch,
+                                 'eval-ce-' + dataset_subset_type.name.lower(),
+                                 num_correct,
+                                 acc.count)
 
     return cross_entropy_loss, avg_acc, num_correct
 
@@ -200,14 +203,13 @@ def train(epoch, found_stop_epoch):
 
     fs, top1 = AverageMeter(), AverageMeter()
 
-    bsz = opt['b']
-
     # The floor function guarantees that we do not
     # repeat samples over a given epoch
     # If the number of samples is not divisible
     # by the batch size, we leave some samples
     # out of the loop
-    maxb = int(math.floor(train_loader.n/bsz))
+    maxb = int(math.floor(train_loader.n/train_loader.b))
+    bsz = train_loader.b
 
     start.record()
     for bi in range(maxb):
@@ -235,7 +237,7 @@ def train(epoch, found_stop_epoch):
         f, acc = optimizer.step(helper(), model, criterion)
 
         # Average loss
-        fs.update(f, bsz)
+        fs.update(f)
         # Average number of correct values over the current
         # number of batches analyzed
         top1.update(acc, bsz)
@@ -270,7 +272,7 @@ def train(epoch, found_stop_epoch):
     if evaluate_second_op:
         msg = f'The learning rate {np.round(fs.avg, 2)} was reached.'
         f' on epoch {epoch}.'
-        logger.log_messages(epoch, msg)
+        print(msg)
         found_stop_epoch = True
 
     logger.log_stop_criteria(epoch, np.int(found_stop_epoch))
@@ -278,7 +280,7 @@ def train(epoch, found_stop_epoch):
     # Evaluate complexity if necessary
     if evaluate_first_op or evaluate_second_op:
         msg = f'Evaluating complexity measures at epoch {epoch}.'
-        logger.log_messages(epoch, msg)
+        print(msg)
         model_before = deepcopy(model)
         train_eval = evaluate_complexity_measures(model,
                                                   init_model,
@@ -309,16 +311,16 @@ def train(epoch, found_stop_epoch):
         result = check_models(model_before, model_after)
         if not result:
             msg = 'Something is wrong in the complexity measures!'
-            logger.log_messages(epoch, msg)
+            print(msg)
             raise Exception('The models are being manipulated wrong!')
         else:
             msg = 'Model is manipulated right inside the complexity measures!'
-            logger.log_messages(epoch, msg)
+            print(msg)
 
     print(f'Train: [{epoch}]: Loss: {np.round(fs.avg, 6)},'
           f' Pctg Acc: {100*np.round(top1.avg, 4)}')
     print()
-    logger.log_all_epochs(epoch, DatasetSubsetType.TRAIN, fs.avg, top1.avg)
+    logger.log_all_epochs(epoch, DatasetSubsetType.TRAIN, fs.avg, top1.sum, top1.count)
     logger.log_gamma(epoch, DatasetSubsetType.TRAIN, optimizer.gamma)
 
     return found_stop_epoch
@@ -345,7 +347,7 @@ def dry_feed():
     making sure it is not on stand by mode
     """
     cache = set_dropout()
-    maxb = int(math.floor(train_loader.n/opt['b']))
+    maxb = int(math.floor(train_loader.n/train_loader.b))
     for bi in range(maxb):
         x, y = next(train_loader)
         if opt['cuda']:
@@ -363,13 +365,13 @@ def val(e, data_loader):
     # Make sure to cover all samples from the beginning
     data_loader.sidx = 0
 
-    maxb = int(math.floor(data_loader.n/opt['b']))
+    maxb = int(math.floor(data_loader.n/data_loader.b))
+    bsz = data_loader.b
 
     fs, top1 = AverageMeter(), AverageMeter()
     for _ in range(maxb):
         x, y = next(data_loader)
         x, y = x.to(device), y.to(device)
-        bsz = x.size(0)
 
         with th.no_grad():
             x = Variable(x)
@@ -379,13 +381,13 @@ def val(e, data_loader):
             f = criterion.forward(yh, y).data.item()
             prec1 = accuracy(yh.data, y.data, topk=(1,))
 
-        fs.update(f, bsz)
+        fs.update(f)
         top1.update(prec1.item(), bsz)
 
     print(f'Test: [{e}], Loss: {np.round(fs.avg, 6)}, '
           f' Pctg Acc: {100*np.round(top1.avg, 4)}')
     print()
-    logger.log_all_epochs(epoch, DatasetSubsetType.TEST, fs.avg, top1.avg)
+    logger.log_all_epochs(epoch, DatasetSubsetType.TEST, fs.avg, top1.sum, top1.count)
     logger.log_batch_correctness(epoch, 'val', top1.sum, top1.count)
 
 
