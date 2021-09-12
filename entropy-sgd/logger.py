@@ -30,13 +30,18 @@ class BaseLogger(object):
         **{'complexity/{}'.format(k.name): v for k,v in all_complexities.items()}
       })
 
-  def log_all_epochs(self, epoch: int, datasubset: DatasetSubsetType, avg_loss: float, errors: float) -> None:
+  def log_all_epochs(self,
+                     epoch: int,
+                     datasubset: DatasetSubsetType,
+                     avg_loss: float,
+                     acc_sum: float,
+                     acc_count: float) -> None:
     self.log_metrics(
       epoch,
       {
         'cross_entropy/{}'.format(datasubset.name.lower()): avg_loss,
-        'percentage_errors/{}'.format(datasubset.name.lower()): errors,
-        'percentage_accuracy/{}'.format(datasubset.name.lower()): 100. - errors
+        'percentage_errors/{}'.format(datasubset.name.lower()): 100*(acc_count - acc_sum)/acc_count,
+        'percentage_accuracy/{}'.format(datasubset.name.lower()): 100*(acc_sum/acc_count)
       })
 
   def log_gamma(self, epoch: int, datasubset: DatasetSubsetType, gamma: float):
@@ -65,13 +70,6 @@ class BaseLogger(object):
       epoch,
       {
         'stop_criteria': criteria,
-      })
-
-  def log_messages(self, epoch: int, message: str):
-    self.log_metrics(
-      epoch,
-      {
-        'messages': message,
       })
 
   def log_batch_correctness(self, epoch: int, tag: str, correct: int, total: int):
