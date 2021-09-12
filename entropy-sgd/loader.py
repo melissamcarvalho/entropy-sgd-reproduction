@@ -68,7 +68,7 @@ def cifar10(opt):
                            th.from_numpy(d1['labels']), train=False)
     # Loads all the validation set which is acessed in order
     # All samples are reached
-    val = sampler_t(opt['eval_b'], th.from_numpy(d2['data']),
+    val = sampler_t(opt['b'], th.from_numpy(d2['data']),
                     th.from_numpy(d2['labels']), train=False)
 
     return train, train_eval, val
