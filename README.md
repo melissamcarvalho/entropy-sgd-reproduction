@@ -1,6 +1,6 @@
-# Entropy-sgd reproduction- 
+# Entropy-sgd reproduction
 
-- [Entropy-sgd reproduction-](#entropy-sgd-reproduction-)
+- [Entropy-sgd reproduction](#entropy-sgd-reproduction)
   - [Objectives](#objectives)
   - [Environment setup](#environment-setup)
     - [Build the container docker](#build-the-container-docker)
@@ -37,6 +37,7 @@ docker run -it --rm -v $PWD:/entropy-reproduction --gpus=all --name="cifar_repro
 #### Data preprocessing
 
 ```
+cd entropy-sgd
 python process_cifar.py -d ../cifar-10-python/
 ```
 
@@ -45,7 +46,7 @@ Results are going to be saved at `proc`.
 #### Training the model
 
 ```
-bash
+cd entropy-sgd
 python train.py \
         -B 1 \
         -exp-tag initial_test_one_epoch_allcnn \
