@@ -5,3 +5,4 @@ entropy-sgd/__pycache__/
 entropy-sgd/.ipynb_checkpoints/
 notebooks/.ipynb_checkpoints/
 WANDB_RESULTS
+cifar-10-python/
