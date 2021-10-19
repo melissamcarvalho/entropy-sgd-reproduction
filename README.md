@@ -1,35 +1,48 @@
-## Entropy-sgd-reproduction
+# Entropy-sgd reproduction- 
 
-Os seguintes passos descrevem como a reprodução dos resultados do
-paper [Entropy-SGD: Biasing Gradient Descent Into Wide Valleys](https://arxiv.org/abs/1611.01838)
-foi realizada.
+- [Entropy-sgd reproduction-](#entropy-sgd-reproduction-)
+  - [Objectives](#objectives)
+  - [Environment setup](#environment-setup)
+    - [Build the container docker](#build-the-container-docker)
+    - [Run the container docker](#run-the-container-docker)
+    - [Steps to be executed inside the container docker](#steps-to-be-executed-inside-the-container-docker)
+      - [Data preprocessing](#data-preprocessing)
+      - [Training the model](#training-the-model)
+      - [Ploting the results](#ploting-the-results)
+    - [Quick reminders](#quick-reminders)
 
-### Definição de ambiente
+## Objectives
 
-* Gerar imagem Docker
+The reproduction of the paper [Entropy-SGD: Biasing Gradient Descent Into Wide Valleys](https://arxiv.org/abs/1611.01838) had the following goals:
+
+1. Reproduce experiments for training the CIFAR-10 dataset. A CNN-based model (`allcnn`) was trained with Entropy-SGD for $L = 0$ (vanilla SGD) and $L > 0$.
+2. Evaluate six complexity measures adapted from [this repo](https://github.com/nitarshan/robust-generalization-measures/blob/master/data/generation/measures.py): pacbayes-init, pacbayes-orig, pacbayes-flatness, pacbayes-mag-init, pacbayes-mag-orig, and pacbayes-mag-flatness.
+
+## Environment setup
+
+### Build the container docker
 
 ```
 docker build -t reproduction:0.1.0 .
 ```
 
-* Executar container
+### Run the container docker
 
 ```
-docker run -it --rm -v /home/jbflorindo/CIFAR/entropy-sgd-reproduction:/entropy-reproduction --gpus=all --name="cifar_reproduction" -p 8888:8888 --ipc="host" reproduction:0.1.0
+docker run -it --rm -v $PWD:/entropy-reproduction --gpus=all --name="cifar_reproduction" -p 8888:8888 --ipc="host" reproduction:0.1.0
 ```
 
-### Processamento dos dados
+### Steps to be executed inside the container docker
 
-No paper, considera-se que o seguinte pipeline de pré-processamento deva ser
-executado.
+#### Data preprocessing
 
 ```
 python process_cifar.py -d ../cifar-10-python/
 ```
 
-Os resultados devem ficar salvos no diretório `proc`.
+Results are going to be saved at `proc`.
 
-### Execução básica para treinamento
+#### Training the model
 
 ```
 bash
@@ -84,20 +97,15 @@ optional arguments:
                         mode of the wandb logger
 ```
 
-### Gerar gráficos
+#### Ploting the results
 
-Os dados salvos pela ferramenta weights and biases foram baixados
-e salvos em `WANDB_RESULTS`. Os gráficos de interesse foram gerados
-por meio do notebook `notebooks/1_wandb_plots_cifar.ipynb`
+Data downloaded from Weights and Biases were saved at a specific folder (`WANDB_RESULTS`).
 
-Para habilitar o notebook dentro do container, execute o seguinte
-comando:
+Plots were created with notebook `notebooks/1_wandb_plots_cifar.ipynb`
 
 `jupyter notebook --ip 0.0.0.0 --no-browser --allow-root`
 
-### Common issues
-
-* Restart container
+### Quick reminders
 
 `sudo systemctl daemon-reload`
 
