@@ -1,0 +1,113 @@
+python train.py \
+        -B 10 \
+        -exp-tag entropy_allcnn_L20_s51_gsp03_lrdecay_noMeasure_b64_64 \
+        -wandb-mode online \
+        -m allcnn \
+        -b 64 \
+        -eval-b 64 \
+        --lr 1 \
+        --l2 0 \
+        -L 20 \
+        -g 0 \
+        -s 51 \
+        -epoch-step 2 \
+        -batch-step 2 \
+        --lr-step 4 \
+        --lr-decay 0.2 \
+        --gamma 0.03 \
+        --noise 0.0001 \
+        --nesterov \
+        --apply-scoping
+
+python train.py \
+        -B 200 \
+        -exp-tag sgd_all_cnn_seed51_lrdecay_noMeasure_b64_64 \
+        -wandb-mode online \
+        -m allcnn \
+        -b 64 \
+        -eval-b 64 \
+        --lr 0.1 \
+        --l2 0 \
+        -L 0 \
+        -g 0 \
+        -s 51 \
+        -epoch-step 100 \
+        -batch-step 100 \
+        --lr-step 60 \
+        --lr-decay 0.2
+
+python train.py \
+        -B 10 \
+        -exp-tag entropy_allcnn_L20_s51_gsp03_lrdecay_noMeasure_b128_1000 \
+        -wandb-mode online \
+        -m allcnn \
+        -b 128 \
+        -eval-b 1000 \
+        --lr 1 \
+        --l2 0 \
+        -L 20 \
+        -g 0 \
+        -s 51 \
+        -epoch-step 2 \
+        -batch-step 2 \
+        --lr-step 4 \
+        --lr-decay 0.2 \
+        --gamma 0.03 \
+        --noise 0.0001 \
+        --nesterov \
+        --apply-scoping
+
+python train.py \
+        -B 200 \
+        -exp-tag sgd_all_cnn_seed51_lrdecay_noMeasure_b128_1000 \
+        -wandb-mode online \
+        -m allcnn \
+        -b 128 \
+        -eval-b 1000 \
+        --lr 0.1 \
+        --l2 0 \
+        -L 0 \
+        -g 0 \
+        -s 51 \
+        -epoch-step 100 \
+        -batch-step 100 \
+        --lr-step 60 \
+        --lr-decay 0.2
+
+python train.py \
+        -B 10 \
+        -exp-tag entropy_allcnn_L20_s51_gsp03_lrdecay_noMeasure_b128_128 \
+        -wandb-mode online \
+        -m allcnn \
+        -b 128 \
+        -eval-b 128 \
+        --lr 1 \
+        --l2 0 \
+        -L 20 \
+        -g 0 \
+        -s 51 \
+        -epoch-step 2 \
+        -batch-step 2 \
+        --lr-step 4 \
+        --lr-decay 0.2 \
+        --gamma 0.03 \
+        --noise 0.0001 \
+        --nesterov \
+        --apply-scoping
+
+python train.py \
+        -B 200 \
+        -exp-tag sgd_all_cnn_seed51_lrdecay_noMeasure_b128_128 \
+        -wandb-mode online \
+        -m allcnn \
+        -b 128 \
+        -eval-b 128 \
+        --lr 0.1 \
+        --l2 0 \
+        -L 0 \
+        -g 0 \
+        -s 51 \
+        -epoch-step 100 \
+        -batch-step 100 \
+        --lr-step 60 \
+        --lr-decay 0.2
