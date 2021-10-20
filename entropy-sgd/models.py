@@ -7,6 +7,7 @@ from torch import Tensor
 
 from experiment_config import DatasetType
 
+
 class View(nn.Module):
     def __init__(self,o):
         super(View, self).__init__()
@@ -17,6 +18,7 @@ class View(nn.Module):
 
 def num_parameters(model):
     return sum([w.numel() for w in model.parameters()])
+
 
 class mnistfc(nn.Module):
     def __init__(self, opt):
@@ -44,6 +46,7 @@ class mnistfc(nn.Module):
 
     def forward(self, x):
         return self.m(x)
+
 
 class mnistconv(nn.Module):
     def __init__(self, opt):
@@ -74,6 +77,7 @@ class mnistconv(nn.Module):
 
     def forward(self, x):
         return self.m(x)
+
 
 class allcnn(nn.Module):
     def __init__(self, opt = {'d':0.5}, c1=96, c2= 192):
@@ -109,6 +113,7 @@ class allcnn(nn.Module):
     def forward(self, x):
         return self.m(x)
 
+
 class ExperimentBaseModel(nn.Module):
   def __init__(self, dataset_type: DatasetType):
     super().__init__()
@@ -131,7 +136,7 @@ class NiNBlock(nn.Module):
 
     self.conv3 = nn.Conv2d(planes, planes, kernel_size=1, stride=1)
     self.bn3 = nn.BatchNorm2d(planes)
-  
+
   def forward(self, x):
     x = self.conv1(x)
     x = self.bn1(x)
@@ -172,8 +177,5 @@ class NiN(ExperimentBaseModel):
     x = self.conv(x)
     x = self.bn(x)
     x = self.relu(x)
-    
     x = self.avgpool(x)
-    
     return x.squeeze()
-
