@@ -15,8 +15,14 @@
 
 The reproduction of the paper [Entropy-SGD: Biasing Gradient Descent Into Wide Valleys](https://arxiv.org/abs/1611.01838) had the following goals:
 
-1. Reproduce experiments for training the CIFAR-10 dataset. A CNN-based model (`allcnn`) was trained with Entropy-SGD for $L = 0$ (vanilla SGD) and $L > 0$.
-2. Evaluate six complexity measures adapted from [this repo](https://github.com/nitarshan/robust-generalization-measures/blob/master/data/generation/measures.py): pacbayes-init, pacbayes-orig, pacbayes-flatness, pacbayes-mag-init, pacbayes-mag-orig, and pacbayes-mag-flatness.
+1. Reproduce experiments for training the CIFAR-10 dataset. A CNN-based model [allcnn](entropy-sgd/models.py) was trained with Entropy-SGD for $L = 0$ (vanilla SGD) and $L > 0$.
+2. Evaluate six complexity measures adapted from [this repository](https://github.com/nitarshan/robust-generalization-measures/blob/master/data/generation/measures.py): 
+   * pacbayes-init
+   * pacbayes-orig
+   * pacbayes-flatness
+   * pacbayes-mag-init
+   * pacbayes-mag-orig
+   * pacbayes-mag-flatness.
 
 ## Environment setup
 
@@ -29,7 +35,7 @@ docker build -t reproduction:0.1.0 .
 ### Run the container docker
 
 ```
-docker run -it --rm -v $PWD:/entropy-reproduction --gpus=all --name="cifar_reproduction" -p 8888:8888 --ipc="host" reproduction:0.1.0
+docker run -it --rm -v $PWD/:/entropy-reproduction/ --gpus=all --name="cifar_reproduction" -p 8888:8888 --ipc="host" reproduction:0.1.0
 ```
 
 ### Steps to be executed inside the container docker
@@ -102,7 +108,7 @@ optional arguments:
 
 Data downloaded from Weights and Biases were saved at a specific folder (`WANDB_RESULTS`).
 
-Plots were created with notebooks `notebooks/1_wandb_plots_cifar.ipynb` and `notebooks/2_wandb_plots_cifar_final.ipynb`.
+Plots were created with notebooks `notebooks/1_wandb_plots_cifar.ipynb`, and `notebooks/2_wandb_plots_cifar_final.ipynb`.
 
 `jupyter notebook --ip 0.0.0.0 --no-browser --allow-root`
 
