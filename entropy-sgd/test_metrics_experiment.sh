@@ -5,16 +5,16 @@ python train.py \
         -m allcnn \
         -b 100 \
         -eval-b 100 \
-        --lr 1 \
-        --l2 0 \
+        -lr 1 \
+        -l2 0 \
         -L 5 \
         -g 0 \
         -s 51 \
         -epoch-step 2 \
         -batch-step 2 \
-        --lr-step 4 \
-        --lr-decay 0.2 \
-        --gamma 0.03 \
-        --noise 0.0001 \
-        --nesterov \
-        --apply-scoping
+        -lr-step 4 \
+        -lr-decay 0.2 \
+        -gamma 0.03 \
+        -noise 0.0001 \
+        -nesterov \
+        -apply-scoping
