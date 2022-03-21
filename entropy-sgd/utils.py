@@ -20,7 +20,7 @@ class AverageMeter(object):
                      of the average value.
         """
         self.val = val
-        self.sum += val
+        self.sum += val * n
         self.count += n
         self.avg = self.sum / self.count
 
@@ -39,22 +39,23 @@ def accuracy(output, target, topk=(1,)):
                       Defaults to 1.
 
     Returns:
-        correct_k (th.Tensor): total top_k correct values. Sum of top_1
-                               + top_2 + ... + top_k. By default, gets
-                               only the correct values considering the
-                               maximum probability (top1).
+        res (list): list of size k. list[i] is the top_i+1 correct values.
     """
 
     maxk = max(topk)
+
+    batch_size = target.size(0)
 
     _, pred = output.topk(maxk, 1, True, True)  # dimension (batch, maxk)
     pred = pred.t()
     correct = pred.eq(target.view(1, -1).expand_as(pred))
 
+    res = []
     for k in topk:
         correct_k = correct[:k].view(-1).float().sum(0)
+        res.append(correct_k.mul_(100.0 / batch_size))
 
-    return correct_k
+    return res
 
 
 def check_models(model1, model2):
