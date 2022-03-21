@@ -26,7 +26,8 @@ class AverageMeter(object):
 
 
 def accuracy(output, target, topk=(1,)):
-    """Computes the number of correct values over a batch
+    """
+    Computes the precision@k for the specified values of k
 
     Args:
         output (th.Tensor): Tensor of dimension (batch, num_classes).
