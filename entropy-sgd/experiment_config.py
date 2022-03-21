@@ -8,9 +8,12 @@ class DatasetType(Enum):
     CIFAR10 = (1, (3, 32, 32), 10)
     SVHN = (2, (3, 32, 32), 10)
 
-  def __init__(self, id: int, image_shape: Tuple[int, int, int], num_classes: int):
-    self.D = image_shape
-    self.K = num_classes
+    def __init__(self,
+                 id: int,
+                 image_shape: Tuple[int, int, int],
+                 num_classes: int):
+        self.D = image_shape
+        self.K = num_classes
 
 
 class DatasetSubsetType(IntEnum):
