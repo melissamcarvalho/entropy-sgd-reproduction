@@ -64,6 +64,5 @@ class ComplexityType(Enum):
 class EvaluationMetrics(NamedTuple):
     acc: float
     avg_loss: float
-    num_correct: int
     num_to_evaluate_on: int
     all_complexities: Dict[ComplexityType, float]
