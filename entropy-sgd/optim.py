@@ -93,6 +93,9 @@ class EntropySGD(Optimizer):
         llr, beta1 = lp['lr'], lp['beta1']
         g = g0 * (1 + g1)**state['t']
 
+        # Store gamma for logging purposes
+        self.gamma = g
+
         for i in range(L):
 
             # Sample a new batch to calculate the gradient of x'
