@@ -104,6 +104,13 @@ optional arguments:
                         mode of the wandb logger
 ```
 
+For debugging purposes, a script with a test experiment may be executed:
+
+```bash
+cd entropy-sgd
+./test_metrics_experiment.sh
+```
+
 #### Ploting the results
 
 Data downloaded from Weights and Biases were saved at a specific folder (`WANDB_RESULTS`).
