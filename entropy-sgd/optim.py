@@ -93,8 +93,10 @@ class EntropySGD(Optimizer):
         llr, beta1 = lp['lr'], lp['beta1']
         g = g0 * (1 + g1)**state['t']
 
-        # Store gamma for logging purposes
+        # Store values for logging purposes
         self.gamma = g
+        self.langevin_lr = llr
+        self.alpha = 1 - beta1
 
         for i in range(L):
 

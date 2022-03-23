@@ -55,17 +55,23 @@ class BaseLogger:
                     pctg_acc
             })
 
-    def log_gamma(self,
-                  epoch: int,
-                  datasubset: DatasetSubsetType,
-                  gamma: float):
+    def log_optim_params(self,
+                         epoch: int,
+                         datasubset: DatasetSubsetType,
+                         gamma: float,
+                         langevin_lr: float,
+                         mean_weight: float):
         """
-        Logs gamma by epoch.
+        Logs Entropy SGD inner parameters
         """
         self.log_metrics(
             epoch,
             {
                 'gamma/{}'.format(datasubset.name.lower()): gamma,
+                'langevin_learning_rate/{}'.
+                format(datasubset.name.lower()): langevin_lr,
+                'alpha_mean_weight/{}'.
+                format(datasubset.name.lower()): mean_weight
             })
 
     def log_lr(self, epoch: int, datasubset: DatasetSubsetType, lr: float):
