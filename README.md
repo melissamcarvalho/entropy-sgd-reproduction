@@ -129,7 +129,7 @@ Data downloaded from Weights and Biases were saved at a specific folder (`WANDB_
 
 Plots were created with notebooks `notebooks/1_wandb_plots_cifar.ipynb`, and `notebooks/2_wandb_plots_cifar_final.ipynb`.
 
-`jupyter notebook --ip 0.0.0.0 --no-browser --allow-root`
+`jupyter notebook --ip 0.0.0.0 --no-browser --port $PORT --allow-root`
 
 ### Quick reminders
 
