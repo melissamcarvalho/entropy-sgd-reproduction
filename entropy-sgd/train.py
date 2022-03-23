@@ -197,7 +197,7 @@ def evaluate_cross_entropy(model,
 
     cross_entropy_loss = loss.avg
 
-    # Average of the percentage value of correctness on each batch
+    # Average accuracy over batches
     avg_acc = acc.avg
 
     logger.log_batch_correctness(epoch,
@@ -417,8 +417,8 @@ def val(e, data_loader):
     logger.log_batch_correctness(epoch, 'val', top1.count)
 
 
-# Controls if an early stopping was found.
-# Currently, thr value is just logged
+# Controls in which epoch a minimum required learning rate was found.
+# Currently, the value is just logged.
 found_stop_epoch = False
 for epoch in range(opt['B']):
     stopping = train(epoch, found_stop_epoch)
