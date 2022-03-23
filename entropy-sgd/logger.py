@@ -60,7 +60,9 @@ class BaseLogger:
                          datasubset: DatasetSubsetType,
                          gamma: float,
                          langevin_lr: float,
-                         mean_weight: float):
+                         mean_weight: float,
+                         momentum: float,
+                         nesterov: bool):
         """
         Logs Entropy SGD inner parameters
         """
@@ -71,7 +73,11 @@ class BaseLogger:
                 'langevin_learning_rate/{}'.
                 format(datasubset.name.lower()): langevin_lr,
                 'alpha_mean_weight/{}'.
-                format(datasubset.name.lower()): mean_weight
+                format(datasubset.name.lower()): mean_weight,
+                'momentum/{}'.
+                format(datasubset.name.lower()): momentum,
+                'nesterov/{}'.
+                format(datasubset.name.lower()): nesterov
             })
 
     def log_lr(self, epoch: int, datasubset: DatasetSubsetType, lr: float):
