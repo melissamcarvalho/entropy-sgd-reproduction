@@ -10,3 +10,6 @@ tensorboard==2.4.1
 dataclasses==0.6
 wandb==0.10.21
 Cython==0.29.22
+jupyter==1.0.0
+traitlets==5.1.1
+pygments==2.4.1
