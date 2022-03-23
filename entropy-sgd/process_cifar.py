@@ -1,13 +1,18 @@
 # Modified from From Taco Cohen's Github: https://github.com/tscohen/gconv_experiments
 
-import os, argparse
+import os
+import argparse
 import numpy as np
-import cPickle as pickle
+import pickle
 
 parser = argparse.ArgumentParser(description='Process CIFAR-10')
-parser.add_argument('-d','--data',   help='Directory containing cifar-10-batches-py',
-        type=str, required=True)
+parser.add_argument('-d',
+                    '--data',
+                    help='Directory containing cifar-10-batches-py',
+                    type=str,
+                    required=True)
 opt = parser.parse_args()
+
 
 class PCA(object):
     def __init__(self, D, n_components):
@@ -67,9 +72,10 @@ class PCA(object):
 
 
 def proc_cifar(loc):
-    def _load_batch(fn):        
+    def _load_batch(fn):
         fo = open(fn, 'rb')
-        d = pickle.load(fo)
+        # Fixing UnicodeDecodeError
+        d = pickle.load(fo, encoding='latin1')
         fo.close()
         return d['data'].reshape(-1, 3, 32, 32), d['labels']
 
@@ -79,15 +85,17 @@ def proc_cifar(loc):
         std[std < eps] = 1.
         data /= std
         return data
-    
+
     proc_loc = 'proc'
     if os.path.exists(proc_loc):
-        print 'Found existing proc, delete the proc folder if you want to run again'
+        print('Found existing proc.'
+              'Delete the proc folder if you want to run again.')
         return
     os.mkdir(proc_loc)
 
-    print '[Loading]'
-    train_fns = [os.path.join(loc, 'data_batch_' + str(i)) for i in range(1, 6)]
+    print('[Loading]')
+    train_fns = [os.path.join(loc, 'data_batch_' + str(i))
+                 for i in range(1, 6)]
     train_batches = [_load_batch(fn) for fn in train_fns]
     test_batch = _load_batch(os.path.join(loc, 'test_batch'))
 
@@ -98,22 +106,24 @@ def proc_cifar(loc):
     tx, vx = normalize(tx), normalize(vx)
     txf, vxf = tx.reshape(tx.shape[0], -1).T, vx.reshape(vx.shape[0], -1).T
 
-    print '[Whitening]'
-    pca = PCA(D=txf, n_components=txf.shape[1])    
+    print('[Whitening]')
+    pca = PCA(D=txf, n_components=txf.shape[1])
     tx = pca.transform(D=txf, whiten=True, ZCA=True).T.reshape(tx.shape)
     vx = pca.transform(D=vxf, whiten=True, ZCA=True).T.reshape(vx.shape)
 
-    print '[Saving]'
+    print('[Saving]')
     np.savez(os.path.join(proc_loc, 'cifar10-train.npz'), data=tx, labels=ty)
     np.savez(os.path.join(proc_loc, 'cifar10-test.npz'), data=vx, labels=vy)
-    print '[Finished]'
+    print('[Finished]')
+
 
 loc = opt.data
 assert os.path.exists(loc), 'loc does not exist: %s' % loc
 raw_loc = os.path.join(loc, 'cifar-10-batches-py')
-assert os.path.exists(raw_loc), 'Could not find CIFAR10 data. Download cifar-10 from ' \
-                                    'http://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz,\n' \
-                                    'Extract the data with: tar zxvf cifar-10-python.tar.gz\n' \
-                                    'And move the cifar-10-batches-py folder to loc (' + loc + ').'
+assert os.path.exists(raw_loc), \
+    'Could not find CIFAR10 data. Download cifar-10 from ' \
+    'http://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz,\n' \
+    'Extract the data with: tar zxvf cifar-10-python.tar.gz\n' \
+    'And move the cifar-10-batches-py folder to loc (' + loc + ').'
 
 proc_cifar(raw_loc)
