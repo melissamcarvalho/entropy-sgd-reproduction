@@ -42,9 +42,21 @@ docker run -it --rm -v $PWD/:/entropy-reproduction/ --gpus=all --name="cifar_rep
 
 #### Data preprocessing
 
+First download the CIFAR-10 dataset from [this source](http://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz) and save inside the folder `entropy-sgd`. Afterwards, run the `process_cifar.py` script to execute the pre-processing steps.
+
 ```
 cd entropy-sgd
-python process_cifar.py -d ../cifar-10-python/
+python process_cifar.py -d cifar-10-python
+```
+
+```
+usage: process_cifar.py [-h] -d DATA
+
+Process CIFAR-10
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -d DATA, --data DATA  Directory containing cifar-10-batches-py
 ```
 
 Results are going to be saved at `proc`.
