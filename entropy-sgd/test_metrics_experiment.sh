@@ -1,7 +1,7 @@
 python train.py \
-        -B 1 \
-        -exp-tag test-code \
-        -wandb-mode offline \
+        -B 5 \
+        -exp-tag test-reviewed-code \
+        -wandb-mode online \
         -m allcnn \
         -b 100 \
         -eval-b 100 \
@@ -12,8 +12,8 @@ python train.py \
         -s 51 \
         -epoch-step 2 \
         -batch-step 2 \
-        -lr-step 4 \
-        -lr-decay 0.2 \
+        -lr-step 2 \
+        -lr-decay 0.1 \
         -gamma 0.03 \
         -noise 0.0001 \
         -nesterov \
