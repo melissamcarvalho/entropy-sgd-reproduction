@@ -195,3 +195,5 @@ def get_flat_measure(
     measures[CT.PACBAYES_MAG_INIT] = _pacbayes_mag_bound(dist_w_vec)  # 56
     measures[CT.PACBAYES_MAG_ORIG] = _pacbayes_mag_bound(w_vec)  # 57
     measures[CT.PACBAYES_MAG_FLATNESS] = torch.tensor(1 / mag_sigma ** 2)  # 61
+
+    return measures
