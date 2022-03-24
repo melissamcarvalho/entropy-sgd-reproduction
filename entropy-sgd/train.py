@@ -289,7 +289,7 @@ def train(epoch, found_stop_epoch):
     logger.log_stop_criteria(epoch, np.int(found_stop_epoch))
 
     # Evaluate complexity if necessary
-    if evaluate_first_op or evaluate_second_op and opt['calculate']:
+    if (evaluate_first_op or evaluate_second_op) and opt['calculate']:
         msg = f'Evaluating complexity measures at epoch {epoch}.'
         print(msg)
         model_before = deepcopy(model)
