@@ -123,6 +123,8 @@ cd entropy-sgd
 ./test_metrics_experiment.sh
 ```
 
+Training experiments and their associated scripts are described on the [training notes](entropy-sgd/train_notes.md).
+
 #### Ploting the results
 
 Data downloaded from Weights and Biases were saved at a specific folder (`WANDB_RESULTS`).
