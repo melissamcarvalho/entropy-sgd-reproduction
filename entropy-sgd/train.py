@@ -178,7 +178,7 @@ def evaluate_cross_entropy(model,
     data_loader.train = False
     loss, acc = AverageMeter(), AverageMeter()
 
-    total_loops = int(data_loader.n / bsz)
+    total_loops = int(math.floor(data_loader.n / bsz))
 
     for _ in range(total_loops):
         data, target = next(data_loader)

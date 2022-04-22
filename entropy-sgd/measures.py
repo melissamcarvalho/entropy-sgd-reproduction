@@ -108,7 +108,7 @@ def _pacbayes_sigma(
                 top1 = AverageMeter()
                 bsz = dataloader.b
 
-                total_loops = int(dataloader.n / bsz)
+                total_loops = int(math.floor(dataloader.n / bsz))
                 for _ in range(total_loops):
                     x, y = next(dataloader)
                     x, y = x.to(device), y.to(device)
