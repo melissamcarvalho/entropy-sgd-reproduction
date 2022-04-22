@@ -35,7 +35,7 @@ The loss function used to train the network is the [cross entropy loss function]
 
 "We train Entropy-SGD with L = 20 for 10 epochs with the original dropout of 0.5. The initial learning rate of the outer loop is set to 1 and drops by a factor of 5 every 4 epochs, while the learning rate of the SGLD updates is fixed to 0.1 with thermal noise 10−4. As the scoping scheme, we set the initial value of the scope to gamma=0.03 which increases by a factor of 1.001 after each parameter update."
 
-The only information being ignored is the initial dropout of 0.5. We are using the fixed `allcnn` netowrk with initial dropout of 0.2.
+The only information being ignored is the initial dropout of 0.5. We are using the fixed `allcnn` network with initial dropout of 0.2.
 
 **SGD**: 
 - 200 epochs;
@@ -57,3 +57,17 @@ The only information being ignored is the initial dropout of 0.5. We are using t
 
 `exp_reproduce_nomeasure.sh`: Same experiments from `final-experiments.sh` but with no calculation of the complexity measures. The goal is to identify that indeed the complexity measure does not affect the training process. It is a sanity check.
 
+`gamma_variation.sh`: Variation of gamma for the analysis of the flatness measures.
+
+`langevin-experiments.sh`: Variation of langevin for the analysis of the flatness measures. Given the reproduciton parameters provided on `final-experiments.sh`, we add variations for L to keep the same number of epochs (200), and also to keep the same step on the learning rate update (80 L x epochs). Number 80 was defined on the experiment with L=20, E=10 and step=4. 
+
+| L| E| step|
+| - | - | - |
+|2 | 100|40 |
+|4|50| 20|
+|5 |40 | 16 |
+| 8| 25| 10|
+|10 |20 | 8|
+|40 | 5 | 2| 
+
+`exp_reproduce_seed_variation`: Repeat the `final-experiments.sh` with different seeds for comparison. 
