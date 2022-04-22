@@ -142,6 +142,7 @@ def evaluate_complexity_measures(model,
     # Evaluates on the whole training set and with the current model
     loss, acc = evaluate_cross_entropy(model,
                                        epoch,
+                                       factor,
                                        device,
                                        train_eval_loader,
                                        val_loader,
@@ -165,6 +166,7 @@ def evaluate_complexity_measures(model,
 
 def evaluate_cross_entropy(model,
                            epoch,
+                           factor,
                            device,
                            train_eval_loader,
                            val_loader,
@@ -200,14 +202,14 @@ def evaluate_cross_entropy(model,
     # Average accuracy over batches
     avg_acc = acc.avg
 
-    logger.log_batch_correctness(epoch,
+    logger.log_batch_correctness((epoch + 1) * factor,
                                  'eval-ce/' + dataset_subset_type.name.lower(),
                                  acc.count)
 
     return cross_entropy_loss, avg_acc
 
 
-def train(epoch, found_stop_epoch):
+def train(epoch, factor, found_stop_epoch):
     model.train()
 
     fs, top1 = AverageMeter(), AverageMeter()
@@ -263,14 +265,14 @@ def train(epoch, found_stop_epoch):
     th.cuda.synchronize()
 
     # Log the training time by epoch
-    logger.log_time(epoch, start.elapsed_time(end))
+    logger.log_time((epoch + 1) * factor, start.elapsed_time(end))
 
     # Log the learning rate
-    logger.log_lr(epoch,
+    logger.log_lr((epoch + 1) * factor,
                   DatasetSubsetType.TRAIN,
                   optimizer.param_groups[0]['lr'])
 
-    logger.log_batch_correctness(epoch, 'train', top1.count)
+    logger.log_batch_correctness((epoch + 1) * factor, 'train', top1.count)
 
     # Check if the complexity measure will be calculated
     # considering two criteria: achievement of the
@@ -286,7 +288,7 @@ def train(epoch, found_stop_epoch):
         print(msg)
         found_stop_epoch = True
 
-    logger.log_stop_criteria(epoch, np.int(found_stop_epoch))
+    logger.log_stop_criteria((epoch + 1) * factor, np.int(found_stop_epoch))
 
     # Evaluate complexity if necessary
     if (evaluate_first_op or evaluate_second_op) and opt['calculate']:
@@ -312,7 +314,7 @@ def train(epoch, found_stop_epoch):
                                                 train_eval_loader,
                                                 val_loader,
                                                 compute_all_measures=True)
-        logger.log_generalization_gap(epoch,
+        logger.log_generalization_gap((epoch + 1) * factor,
                                       train_eval.acc,
                                       val_eval.acc,
                                       train_eval.avg_loss,
@@ -331,12 +333,12 @@ def train(epoch, found_stop_epoch):
     print(f'Train: [{epoch}]: Loss: {np.round(fs.avg, 6)},'
           f'Perc. top1 accuracy: {np.round(top1.avg, 4)}\n')
 
-    logger.log_all_epochs(epoch,
+    logger.log_all_epochs((epoch + 1) * factor,
                           DatasetSubsetType.TRAIN,
                           fs.avg,
                           top1.avg)
 
-    logger.log_optim_params(epoch,
+    logger.log_optim_params((epoch + 1) * factor,
                             DatasetSubsetType.TRAIN,
                             optimizer.gamma,
                             optimizer.langevin_lr,
@@ -379,7 +381,7 @@ def dry_feed():
     set_dropout(cache)
 
 
-def val(e, data_loader):
+def val(e, factor, data_loader):
     dry_feed()
     model.eval()
 
@@ -409,18 +411,22 @@ def val(e, data_loader):
     print(f'Test: [{e}], Loss: {np.round(fs.avg, 6)}, '
           f' Perc. top1 accuracy: {np.round(top1.avg, 4)}\n')
 
-    logger.log_all_epochs(epoch,
+    logger.log_all_epochs((epoch + 1) * factor,
                           DatasetSubsetType.TEST,
                           fs.avg,
                           top1.avg)
 
-    logger.log_batch_correctness(epoch, 'val', top1.count)
+    logger.log_batch_correctness((epoch + 1) * factor, 'val', top1.count)
 
 
 # Controls in which epoch a minimum required learning rate was found.
 # Currently, the value is just logged.
 found_stop_epoch = False
 for epoch in range(opt['B']):
-    stopping = train(epoch, found_stop_epoch)
+
+    # Define factor to log results (L x epochs)
+    factor = opt['L'] if opt['L'] > 0 else 1
+
+    stopping = train(epoch, factor, found_stop_epoch)
     found_stop_epoch = stopping
-    val(epoch, val_loader)
+    val(epoch, factor, val_loader)
