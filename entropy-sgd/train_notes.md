@@ -57,14 +57,32 @@ The only information being ignored is the initial dropout of 0.5. We are using t
 
 `exp_reproduce_nomeasure.sh`: Same experiments from `final-experiments.sh` but with no calculation of the complexity measures. The goal is to identify that indeed the complexity measure does not affect the training process. It is a sanity check.
 
-`gamma_variation.sh`: Variation of gamma for the analysis of the flatness measures.
+`gamma_experiments.sh`: Variation of gamma for the analysis of the flatness measures. Given the reproduction experiment where gamma is scoped as `0.03(1.001)^t`, two types of experiments are executed for the analysis of the flatness measures: experiments with the same scoping strategy, but varying the gamma starting value, and experiments without scoping, but also varying the gamma value from 3e-6 to 3. Please, find the details on the table below:
+
+| Initial gamma| Scoping|
+| - | - |
+| 3e-6| :white_check_mark:|
+|3e-5 | :white_check_mark:|
+|3e-4 | :white_check_mark:|
+|3e-3 |:white_check_mark: |
+|3e-1 |:white_check_mark: |
+|3 | :white_check_mark:|
+| 3e-6| :x:|
+|3e-5 | :x:|
+|3e-4 |:x: |
+|3e-3 | :x:|
+| 3e-2|:x: |
+| 3e-1| :x:|
+| 3| :x:|
+
+Accordying to the definition of the modified Gibbs distribution, for small values of gamma, the modified distribution gets closer to the original one. As a consequence, it is expected that for a small value of gamma, the behaviour of the optimization for L=2 is more similar to the behaviour of L=0.
 
 `langevin-experiments.sh`: Variation of langevin for the analysis of the flatness measures. Given the reproduciton parameters provided on `final-experiments.sh`, we add variations for L to keep the same number of epochs (200), and also to keep the same step on the learning rate update (80 L x epochs). Number 80 was defined on the experiment with L=20, E=10 and step=4. 
 
 | L| E| step|
 | - | - | - |
-|2 | 100|40 |
-|4|50| 20|
+|2 | 100| 40 |
+|4| 50| 20|
 |5 |40 | 16 |
 | 8| 25| 10|
 |10 |20 | 8|
