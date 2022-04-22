@@ -88,4 +88,4 @@ Accordying to the definition of the modified Gibbs distribution, for small value
 |10 |20 | 8|
 |40 | 5 | 2| 
 
-`exp_reproduce_seed_variation`: Repeat the `final-experiments.sh` with different seeds for comparison. 
+`final-experiments-seed_variation`: Repeat the `final-experiments.sh` with different seeds for comparison.

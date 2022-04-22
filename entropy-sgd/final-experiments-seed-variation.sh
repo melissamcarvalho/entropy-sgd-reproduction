@@ -1,0 +1,91 @@
+python train.py \
+        -B 10 \
+        -exp-tag entropy_reproduction_s50 \
+        -wandb-mode online \
+        -m allcnn \
+        -b 100 \
+        -eval-b 100 \
+        -lr 1 \
+        -l2 0 \
+        -L 20 \
+        -g 0 \
+        -s 50 \
+        -epoch-step 1 \
+        -batch-step 100 \
+        -lr-step 4 \
+        -lr-decay 0.2 \
+        -gamma 0.03 \
+        -scoping 0.001 \
+        -noise 0.0001 \
+        -nesterov \
+        -momentum 0.9 \
+        -apply-scoping \
+        -min-loss 0.1 \
+        -calculate
+    
+python train.py \
+        -B 200 \
+        -exp-tag sgd_reproduction_s50 \
+        -wandb-mode online \
+        -m allcnn \
+        -b 100 \
+        -eval-b 100 \
+        -lr 0.1 \
+        -l2 0 \
+        -L 0 \
+        -g 0 \
+        -s 50 \
+        -epoch-step 20 \
+        -batch-step 100 \
+        -lr-step 60 \
+        -lr-decay 0.2 \
+        -nesterov \
+        -momentum 0.9 \
+        -min-loss 0.1 \
+        -calculate
+
+python train.py \
+        -B 10 \
+        -exp-tag entropy_reproduction_s52 \
+        -wandb-mode online \
+        -m allcnn \
+        -b 100 \
+        -eval-b 100 \
+        -lr 1 \
+        -l2 0 \
+        -L 20 \
+        -g 0 \
+        -s 52 \
+        -epoch-step 1 \
+        -batch-step 100 \
+        -lr-step 4 \
+        -lr-decay 0.2 \
+        -gamma 0.03 \
+        -scoping 0.001 \
+        -noise 0.0001 \
+        -nesterov \
+        -momentum 0.9 \
+        -apply-scoping \
+        -min-loss 0.1 \
+        -calculate
+    
+python train.py \
+        -B 200 \
+        -exp-tag sgd_reproduction_s52 \
+        -wandb-mode online \
+        -m allcnn \
+        -b 100 \
+        -eval-b 100 \
+        -lr 0.1 \
+        -l2 0 \
+        -L 0 \
+        -g 0 \
+        -s 52 \
+        -epoch-step 20 \
+        -batch-step 100 \
+        -lr-step 60 \
+        -lr-decay 0.2 \
+        -nesterov \
+        -momentum 0.9 \
+        -min-loss 0.1 \
+        -calculate
