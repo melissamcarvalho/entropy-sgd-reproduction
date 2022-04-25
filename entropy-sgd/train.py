@@ -203,7 +203,7 @@ def evaluate_cross_entropy(model,
     avg_acc = acc.avg
 
     logger.log_batch_correctness((epoch + 1) * factor,
-                                 'eval-ce/' + dataset_subset_type.name.lower(),
+                                 'eval_ce_' + dataset_subset_type.name.lower(),
                                  acc.count)
 
     return cross_entropy_loss, avg_acc
@@ -339,7 +339,6 @@ def train(epoch, factor, found_stop_epoch):
                           top1.avg)
 
     logger.log_optim_params((epoch + 1) * factor,
-                            DatasetSubsetType.TRAIN,
                             optimizer.gamma,
                             optimizer.langevin_lr,
                             optimizer.alpha,

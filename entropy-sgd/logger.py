@@ -48,16 +48,16 @@ class BaseLogger:
         self.log_metrics(
             epoch,
             {
-                'cross_entropy/{}'.format(datasubset.name.lower()): avg_loss,
-                'percentage_errors/{}'.format(datasubset.name.lower()):
-                    100. - pctg_acc,
-                'percentage_accuracy/{}'.format(datasubset.name.lower()):
-                    pctg_acc
+                'general/cross_entropy_{}'.
+                format(datasubset.name.lower()): avg_loss,
+                'general/percentage_errors_{}'.
+                format(datasubset.name.lower()): 100. - pctg_acc,
+                'general/percentage_accuracy_{}'.
+                format(datasubset.name.lower()): pctg_acc
             })
 
     def log_optim_params(self,
                          epoch: int,
-                         datasubset: DatasetSubsetType,
                          gamma: float,
                          langevin_lr: float,
                          mean_weight: float,
@@ -69,15 +69,11 @@ class BaseLogger:
         self.log_metrics(
             epoch,
             {
-                'gamma/{}'.format(datasubset.name.lower()): gamma,
-                'langevin_learning_rate/{}'.
-                format(datasubset.name.lower()): langevin_lr,
-                'alpha_mean_weight/{}'.
-                format(datasubset.name.lower()): mean_weight,
-                'momentum/{}'.
-                format(datasubset.name.lower()): momentum,
-                'nesterov/{}'.
-                format(datasubset.name.lower()): nesterov
+                'optim/gamma': gamma,
+                'optim/langevin_learning_rate': langevin_lr,
+                'optim/alpha_mean_weight': mean_weight,
+                'optim/momentum': momentum,
+                'optim/nesterov': nesterov
             })
 
     def log_lr(self, epoch: int, datasubset: DatasetSubsetType, lr: float):
@@ -87,7 +83,7 @@ class BaseLogger:
         self.log_metrics(
             epoch,
             {
-                'learning_rate/{}'.format(datasubset.name.lower()): lr,
+                'optim/learning_rate_{}'.format(datasubset.name.lower()): lr,
             })
 
     def log_time(self, epoch: int, time: float):
@@ -97,7 +93,7 @@ class BaseLogger:
         self.log_metrics(
             epoch,
             {
-                'time': time,
+                'time/training_time': time,
             })
 
     def log_stop_criteria(self, epoch: int, criteria: int):
@@ -107,7 +103,7 @@ class BaseLogger:
         self.log_metrics(
             epoch,
             {
-                'stop_criteria': criteria,
+                'stop_criteria/reach_minimum_loss': criteria,
             })
 
     def log_batch_correctness(self,
@@ -120,7 +116,7 @@ class BaseLogger:
         self.log_metrics(
             epoch,
             {
-                'batch_correctness/{}/batch'.format(tag): total
+                'batch_correctness/{}'.format(tag): total
             })
 
 
