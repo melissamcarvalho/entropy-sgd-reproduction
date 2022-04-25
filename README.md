@@ -5,11 +5,11 @@
   - [Environment setup](#environment-setup)
     - [Build the container docker](#build-the-container-docker)
     - [Run the container docker](#run-the-container-docker)
-    - [Steps to be executed inside the container docker](#steps-to-be-executed-inside-the-container-docker)
-      - [Data preprocessing](#data-preprocessing)
-      - [Training the model](#training-the-model)
-      - [Ploting the results](#ploting-the-results)
-    - [Quick reminders](#quick-reminders)
+  - [Steps to be executed inside the container docker](#steps-to-be-executed-inside-the-container-docker)
+    - [Data preprocessing](#data-preprocessing)
+    - [Training the model](#training-the-model)
+    - [Plotting the results](#plotting-the-results)
+  - [Quick reminders](#quick-reminders)
 
 ## Objectives
 
@@ -38,9 +38,9 @@ docker build -t reproduction:0.1.0 .
 docker run -it --rm -v $PWD/:/entropy-reproduction/ --gpus=all --name="cifar_reproduction" -p 8888:8888 --ipc="host" reproduction:0.1.0
 ```
 
-### Steps to be executed inside the container docker
+## Steps to be executed inside the container docker
 
-#### Data preprocessing
+### Data preprocessing
 
 First download the CIFAR-10 dataset from [this source](http://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz) and save inside the folder `entropy-sgd`. Afterwards, run the `process_cifar.py` script to execute the pre-processing steps.
 
@@ -61,7 +61,7 @@ optional arguments:
 
 Results are going to be saved at `proc`.
 
-#### Training the model
+### Training the model
 
 ```
 cd entropy-sgd
@@ -123,17 +123,17 @@ cd entropy-sgd
 ./test_metrics_experiment.sh
 ```
 
-Training experiments and their associated scripts are described on the [training notes](entropy-sgd/train_notes.md).
+Training experiments and their associated scripts are listed on the [training notes](entropy-sgd/train_notes.md).
 
-#### Ploting the results
+### Plotting the results
 
-Data downloaded from Weights and Biases were saved at a specific folder (`WANDB_RESULTS`).
+Data downloaded from Weights and Biases was saved at a specific folder (`WANDB_RESULTS`).
 
 Plots were created with notebooks `notebooks/1_wandb_plots_cifar.ipynb`, and `notebooks/2_wandb_plots_cifar_final.ipynb`.
 
 `jupyter notebook --ip 0.0.0.0 --no-browser --port $PORT --allow-root`
 
-### Quick reminders
+## Quick reminders
 
 `sudo systemctl daemon-reload`
 
