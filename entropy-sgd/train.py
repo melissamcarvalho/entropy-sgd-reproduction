@@ -313,6 +313,7 @@ def train(epoch, factor, found_stop_epoch):
                                                 init_model,
                                                 device,
                                                 epoch,
+                                                factor,
                                                 opt['s'],
                                                 DatasetSubsetType.TEST,
                                                 train_eval_loader,
