@@ -92,6 +92,9 @@ def _pacbayes_sigma(
         else torch.Generator()
     rng.manual_seed(BIG_NUMBER + seed)
 
+    # Dictionary to save measure details
+    pacbayes_details = dict()
+
     print(f'Total depths: {search_depth}')
     print(f'Total MC samples: {montecarlo_samples}')
 
@@ -133,7 +136,11 @@ def _pacbayes_sigma(
         else:
             # Not perturbed enough to reach target displacement
             lower = sigma
-    return sigma
+
+    pacbayes_details['final_depth'] = depth
+    pacbayes_details['found_displacement'] = displacement
+
+    return sigma, pacbayes_details
 
 
 @torch.no_grad()
@@ -172,7 +179,7 @@ def get_flat_measure(
     num_params = len(w_vec)
 
     print("Calculating Flatness-based measures \n")
-    sigma = _pacbayes_sigma(model, dataloader, acc, seed)
+    sigma, sigma_details = _pacbayes_sigma(model, dataloader, acc, seed)
 
     def _pacbayes_bound(reference_vec):
         first = (reference_vec.norm(p=2) ** 2) / (4 * sigma ** 2)
@@ -183,7 +190,9 @@ def get_flat_measure(
 
     print("Magnitude-aware Perturbation Bounds")
     mag_eps = 1e-3
-    mag_sigma = _pacbayes_sigma(model, dataloader, acc, seed, mag_eps)
+    mag_sigma, mag_sigma_details = _pacbayes_sigma(model,
+                                                   dataloader,
+                                                   acc, seed, mag_eps)
     omega = num_params
 
     def _pacbayes_mag_bound(reference_vec):
@@ -196,4 +205,4 @@ def get_flat_measure(
     measures[CT.PACBAYES_MAG_ORIG] = _pacbayes_mag_bound(w_vec)  # 57
     measures[CT.PACBAYES_MAG_FLATNESS] = torch.tensor(1 / mag_sigma ** 2)  # 61
 
-    return measures
+    return measures, sigma_details, mag_sigma_details

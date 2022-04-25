@@ -130,6 +130,7 @@ def evaluate_complexity_measures(model,
                                  init_model,
                                  device,
                                  epoch,
+                                 factor,
                                  seed,
                                  dataset_subset_type,
                                  train_eval_loader,
@@ -151,12 +152,14 @@ def evaluate_complexity_measures(model,
     complexities = {}
     if dataset_subset_type == DatasetSubsetType.TRAIN and compute_all_measures:
         print('Calculating measures...\n')
-        complexities = get_flat_measure(model,
-                                        init_model,
-                                        data_loader,
-                                        acc,
-                                        seed)
+        complexities, sigma, mag_sigma = get_flat_measure(model,
+                                                          init_model,
+                                                          data_loader,
+                                                          acc,
+                                                          seed)
         print('Measures successfully calculated!!\n')
+        logger.log_pacbayes_details((epoch + 1) * factor, sigma, 'sigma')
+        logger.log_pacbayes_details((epoch + 1) * factor, mag_sigma, 'magsima')
 
     return EvaluationMetrics(acc,
                              loss,
@@ -299,6 +302,7 @@ def train(epoch, factor, found_stop_epoch):
                                                   init_model,
                                                   device,
                                                   epoch,
+                                                  factor,
                                                   opt['s'],
                                                   DatasetSubsetType.TRAIN,
                                                   train_eval_loader,

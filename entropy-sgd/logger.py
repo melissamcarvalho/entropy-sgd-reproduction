@@ -36,6 +36,23 @@ class BaseLogger:
                     v for k, v in all_complexities.items()}
             })
 
+    def log_pacbayes_details(self,
+                             epoch: int,
+                             details: dict,
+                             tag: str) -> None:
+        """
+        Logs parameters of the _pacbayes_sigma measure: depth and displacement.
+        depth: number of iterations required to reach the target displacement.
+        displacement: first value lower than the target displacement.
+        """
+
+        self.log_metrics(
+            epoch,
+            {
+                f'complexity/{tag}_depth': details['final_depth'],
+                f'complexity/{tag}_displacement': details['found_displacement']
+            })
+
     def log_all_epochs(self,
                        epoch: int,
                        datasubset: DatasetSubsetType,
