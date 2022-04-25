@@ -10,7 +10,7 @@ python train.py \
         -L 2 \
         -g 0 \
         -s 51 \
-        -epoch-step 1 \
+        -epoch-step 10 \
         -batch-step 100 \
         -lr-step 40 \
         -lr-decay 0.2 \
@@ -35,7 +35,7 @@ python train.py \
         -L 2 \
         -g 0 \
         -s 51 \
-        -epoch-step 1 \
+        -epoch-step 10 \
         -batch-step 100 \
         -lr-step 40 \
         -lr-decay 0.2 \
@@ -60,7 +60,7 @@ python train.py \
         -L 2 \
         -g 0 \
         -s 51 \
-        -epoch-step 1 \
+        -epoch-step 10 \
         -batch-step 100 \
         -lr-step 40 \
         -lr-decay 0.2 \
@@ -85,7 +85,7 @@ python train.py \
         -L 2 \
         -g 0 \
         -s 51 \
-        -epoch-step 1 \
+        -epoch-step 10 \
         -batch-step 100 \
         -lr-step 40 \
         -lr-decay 0.2 \
@@ -110,7 +110,7 @@ python train.py \
         -L 2 \
         -g 0 \
         -s 51 \
-        -epoch-step 1 \
+        -epoch-step 10 \
         -batch-step 100 \
         -lr-step 40 \
         -lr-decay 0.2 \
@@ -135,7 +135,7 @@ python train.py \
         -L 2 \
         -g 0 \
         -s 51 \
-        -epoch-step 1 \
+        -epoch-step 10 \
         -batch-step 100 \
         -lr-step 40 \
         -lr-decay 0.2 \
@@ -160,7 +160,7 @@ python train.py \
         -L 2 \
         -g 0 \
         -s 51 \
-        -epoch-step 1 \
+        -epoch-step 10 \
         -batch-step 100 \
         -lr-step 40 \
         -lr-decay 0.2 \
@@ -184,7 +184,7 @@ python train.py \
         -L 2 \
         -g 0 \
         -s 51 \
-        -epoch-step 1 \
+        -epoch-step 10 \
         -batch-step 100 \
         -lr-step 40 \
         -lr-decay 0.2 \
@@ -208,7 +208,7 @@ python train.py \
         -L 2 \
         -g 0 \
         -s 51 \
-        -epoch-step 1 \
+        -epoch-step 10 \
         -batch-step 100 \
         -lr-step 40 \
         -lr-decay 0.2 \
@@ -232,7 +232,7 @@ python train.py \
         -L 2 \
         -g 0 \
         -s 51 \
-        -epoch-step 1 \
+        -epoch-step 10 \
         -batch-step 100 \
         -lr-step 40 \
         -lr-decay 0.2 \
@@ -256,7 +256,7 @@ python train.py \
         -L 2 \
         -g 0 \
         -s 51 \
-        -epoch-step 1 \
+        -epoch-step 10 \
         -batch-step 100 \
         -lr-step 40 \
         -lr-decay 0.2 \
@@ -280,7 +280,7 @@ python train.py \
         -L 2 \
         -g 0 \
         -s 51 \
-        -epoch-step 1 \
+        -epoch-step 10 \
         -batch-step 100 \
         -lr-step 40 \
         -lr-decay 0.2 \
@@ -304,7 +304,7 @@ python train.py \
         -L 2 \
         -g 0 \
         -s 51 \
-        -epoch-step 1 \
+        -epoch-step 10 \
         -batch-step 100 \
         -lr-step 40 \
         -lr-decay 0.2 \
