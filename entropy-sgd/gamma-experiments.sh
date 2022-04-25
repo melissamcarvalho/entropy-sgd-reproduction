@@ -14,7 +14,7 @@ python train.py \
         -batch-step 100 \
         -lr-step 40 \
         -lr-decay 0.2 \
-        -gamma 0.000006 \
+        -gamma 0.000003 \
         -scoping 0.001 \
         -noise 0.0001 \
         -nesterov \
@@ -164,7 +164,7 @@ python train.py \
         -batch-step 100 \
         -lr-step 40 \
         -lr-decay 0.2 \
-        -gamma 0.000006 \
+        -gamma 0.000003 \
         -scoping 0.001 \
         -noise 0.0001 \
         -nesterov \
