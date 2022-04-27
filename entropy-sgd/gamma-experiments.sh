@@ -1,30 +1,5 @@
 python train.py \
         -B 100 \
-        -exp-tag gamma_p6_scoping \
-        -wandb-mode online \
-        -m allcnn \
-        -b 100 \
-        -eval-b 100 \
-        -lr 1 \
-        -l2 0 \
-        -L 2 \
-        -g 0 \
-        -s 51 \
-        -epoch-step 10 \
-        -batch-step 100 \
-        -lr-step 40 \
-        -lr-decay 0.2 \
-        -gamma 0.000003 \
-        -scoping 0.001 \
-        -noise 0.0001 \
-        -nesterov \
-        -momentum 0.9 \
-        -apply-scoping \
-        -min-loss 0.1 \
-        -calculate
-
-python train.py \
-        -B 100 \
         -exp-tag gamma_p5_scoping \
         -wandb-mode online \
         -m allcnn \
@@ -40,7 +15,7 @@ python train.py \
         -lr-step 40 \
         -lr-decay 0.2 \
         -gamma 0.00003 \
-        -scoping 0.001 \
+        -scoping 0.000001 \
         -noise 0.0001 \
         -nesterov \
         -momentum 0.9 \
@@ -65,7 +40,7 @@ python train.py \
         -lr-step 40 \
         -lr-decay 0.2 \
         -gamma 0.0003 \
-        -scoping 0.001 \
+        -scoping 0.00001 \
         -noise 0.0001 \
         -nesterov \
         -momentum 0.9 \
@@ -90,7 +65,7 @@ python train.py \
         -lr-step 40 \
         -lr-decay 0.2 \
         -gamma 0.003 \
-        -scoping 0.001 \
+        -scoping 0.0001 \
         -noise 0.0001 \
         -nesterov \
         -momentum 0.9 \
@@ -145,30 +120,6 @@ python train.py \
         -nesterov \
         -momentum 0.9 \
         -apply-scoping \
-        -min-loss 0.1 \
-        -calculate
-
-python train.py \
-        -B 100 \
-        -exp-tag gamma_p6_noscoping \
-        -wandb-mode online \
-        -m allcnn \
-        -b 100 \
-        -eval-b 100 \
-        -lr 1 \
-        -l2 0 \
-        -L 2 \
-        -g 0 \
-        -s 51 \
-        -epoch-step 10 \
-        -batch-step 100 \
-        -lr-step 40 \
-        -lr-decay 0.2 \
-        -gamma 0.000003 \
-        -scoping 0.001 \
-        -noise 0.0001 \
-        -nesterov \
-        -momentum 0.9 \
         -min-loss 0.1 \
         -calculate
 
