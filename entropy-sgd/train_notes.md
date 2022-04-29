@@ -64,7 +64,7 @@ Besides that, we also noticed that gamma scoping may affect the learning rate an
 Please, find the details on the table below:
 
 | Initial gamma| Scoping| LR decay|
-| - | - |
+| - | - | - |
 |3e-5 | :white_check_mark:| :white_check_mark:|
 |3e-4 | :white_check_mark:| :white_check_mark:|
 |3e-3 |:white_check_mark: | :white_check_mark:|
