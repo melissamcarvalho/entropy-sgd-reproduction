@@ -57,23 +57,27 @@ The only information being ignored is the initial dropout of 0.5. We are using t
 
 `exp_reproduce_nomeasure.sh`: Same experiments from `final-experiments.sh` but with no calculation of the complexity measures. The goal is to identify that indeed the complexity measure does not affect the training process. It is a sanity check.
 
-`gamma_experiments.sh`: Variation of gamma for the analysis of the flatness measures. Given the reproduction experiment where gamma is scoped as `0.03(1.001)^t`, two types of experiments are executed for the analysis of the flatness measures: experiments with the same scoping strategy, but varying the gamma starting value, and experiments without scoping, but also varying the gamma value from 3e-6 to 3. Please, find the details on the table below:
+`gamma_experiments.sh`: Variation of gamma for the analysis of the flatness measures. Given the reproduction experiment where gamma is scoped as `0.03(1.001)^t`, two types of experiments are executed for the analysis of the flatness measures: experiments with the same scoping strategy, but varying the gamma starting value, and experiments without scoping, but also varying the gamma value from 3e-5 to 3. 
 
-| Initial gamma| Scoping|
+Besides that, we also noticed that gamma scoping may affect the learning rate annealing for larger values of gamma. In this sense, some experiments were also conducted without learning rate annealing (gamma=3e-1, and gamma=3).
+
+Please, find the details on the table below:
+
+| Initial gamma| Scoping| LR decay|
 | - | - |
-| 3e-6| :white_check_mark:|
-|3e-5 | :white_check_mark:|
-|3e-4 | :white_check_mark:|
-|3e-3 |:white_check_mark: |
-|3e-1 |:white_check_mark: |
-|3 | :white_check_mark:|
-| 3e-6| :x:|
-|3e-5 | :x:|
-|3e-4 |:x: |
-|3e-3 | :x:|
-| 3e-2|:x: |
-| 3e-1| :x:|
-| 3| :x:|
+|3e-5 | :white_check_mark:| :white_check_mark:|
+|3e-4 | :white_check_mark:| :white_check_mark:|
+|3e-3 |:white_check_mark: | :white_check_mark:|
+|3e-1 |:white_check_mark: |:white_check_mark:|
+|3e-1 |:white_check_mark: | :x:|
+|3 | :white_check_mark:| :white_check_mark:| 
+|3 | :white_check_mark:| :x:| 
+|3e-5 | :x:| :white_check_mark:|
+|3e-4 |:x: | :white_check_mark:|
+|3e-3 | :x:|:white_check_mark: |
+| 3e-2|:x: |:white_check_mark: |
+| 3e-1| :x:| :white_check_mark:|
+| 3| :x:| :white_check_mark:|
 
 Accordying to the definition of the modified Gibbs distribution, for small values of gamma, the modified distribution gets closer to the original one. As a consequence, it is expected that for a small value of gamma, the behaviour of the optimization for L=2 is more similar to the behaviour of L=0.
 
@@ -89,3 +93,5 @@ Accordying to the definition of the modified Gibbs distribution, for small value
 |40 | 5 | 2| 
 
 `final-experiments-seed_variation`: Repeat the `final-experiments.sh` with different seeds for comparison.
+
+Note: added remaining expeirments to grouping_experiments.sh file just to be more efficient (remove this note later).
