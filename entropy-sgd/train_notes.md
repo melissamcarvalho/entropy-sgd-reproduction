@@ -56,6 +56,8 @@ The only information being ignored is the initial dropout of 0.5. We are using t
 - Complexity measure is calculated in all epochs;
 
 `exp_reproduce_nomeasure.sh`: Same experiments from `final-experiments.sh` but with no calculation of the complexity measures. The goal is to identify that indeed the complexity measure does not affect the training process. It is a sanity check.
+- Initially, we noticed higher losses after calculating the complexity measure. Please, check the experiment `L=0_B=200_s51_nomeasure` and compare with `L=0_B=200_s51`.
+- Solution: make a deepcopy before starting the calculus of the complexity measure, and assign the copy to a varible with new name. Variable model was replaced by measure_model, and init_model by measure_init_model.
 
 `gamma_experiments.sh`: Variation of gamma for the analysis of the flatness measures. Given the reproduction experiment where gamma is scoped as `0.03(1.001)^t`, two types of experiments are executed for the analysis of the flatness measures: experiments with the same scoping strategy, but varying the gamma starting value, and experiments without scoping, but also varying the gamma value from 3e-5 to 3. 
 
@@ -94,4 +96,4 @@ Accordying to the definition of the modified Gibbs distribution, for small value
 
 `final-experiments-seed_variation`: Repeat the `final-experiments.sh` with different seeds for comparison.
 
-Note: added remaining expeirments to grouping_experiments.sh file just to be more efficient (remove this note later).
+Note: added remaining experiments to grouping_experiments.sh file just to be more efficient (remove this note later).
