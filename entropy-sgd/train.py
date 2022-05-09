@@ -297,9 +297,10 @@ def train(epoch, factor, found_stop_epoch):
     if (evaluate_first_op or evaluate_second_op) and opt['calculate']:
         msg = f'Evaluating complexity measures at epoch {epoch}.'
         print(msg)
-        model_before = deepcopy(model)
-        train_eval = evaluate_complexity_measures(model,
-                                                  init_model,
+        measure_model = deepcopy(model)
+        measure_init_model = deepcopy(init_model)
+        train_eval = evaluate_complexity_measures(measure_model,
+                                                  measure_init_model,
                                                   device,
                                                   epoch,
                                                   factor,
@@ -309,8 +310,10 @@ def train(epoch, factor, found_stop_epoch):
                                                   val_loader,
                                                   compute_all_measures=True)
 
-        val_eval = evaluate_complexity_measures(model,
-                                                init_model,
+        measure_model = deepcopy(model)
+        measure_init_model = deepcopy(init_model)
+        val_eval = evaluate_complexity_measures(measure_model,
+                                                measure_init_model,
                                                 device,
                                                 epoch,
                                                 factor,
@@ -325,15 +328,6 @@ def train(epoch, factor, found_stop_epoch):
                                       train_eval.avg_loss,
                                       val_eval.avg_loss,
                                       train_eval.all_complexities)
-        model_after = model
-        result = check_models(model_before, model_after)
-        if not result:
-            msg = 'Something is wrong in the complexity measures!'
-            print(msg)
-            raise Exception('The models are being manipulated wrong!')
-        else:
-            msg = 'Model is manipulated right inside the complexity measures!'
-            print(msg)
 
     print(f'Train: [{epoch}]: Loss: {np.round(fs.avg, 6)},'
           f'Perc. top1 accuracy: {np.round(top1.avg, 4)}\n')
