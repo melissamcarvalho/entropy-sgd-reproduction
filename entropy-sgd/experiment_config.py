@@ -1,5 +1,5 @@
 from enum import Enum, IntEnum
-from typing import Dict, List, NamedTuple, Optional, Tuple
+from typing import Dict, NamedTuple, Tuple
 
 
 # TODO: Remove it when we eliminate typing requirements
