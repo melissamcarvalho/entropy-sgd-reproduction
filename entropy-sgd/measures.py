@@ -144,7 +144,7 @@ def _pacbayes_sigma(
 
 
 @torch.no_grad()
-def get_flat_measure(
+def calculate_flatness_measures(
     model,
     init_model,
     dataloader,
