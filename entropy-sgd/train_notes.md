@@ -1,4 +1,9 @@
-# Trainining process
+# Experiments overview
+
+- [Experiments overview](#experiments-overview)
+  - [CIFAR-10 dataset](#cifar-10-dataset)
+  - [Convolutional neural network model](#convolutional-neural-network-model)
+  - [Experiments](#experiments)
 
 ## CIFAR-10 dataset
 
@@ -7,7 +12,7 @@ The CIFAR-10 dataset is divided in two subsets:
 * Train: 50000 three channel images of size 32 x 32.
 * Validation: 10000 three channel images of size 32 x 32.
 
-The training and validation sets are built with the `sampler_t` class. During training, batches of a predefined size are randomly selected. On the other hand, during validation all the validation set is selected on the same order by the following process:
+The training and validation sets are built with the `sampler_t` class. During training, batches of a predefined size are randomly selected. On the other hand, during validation all the validation set is selected with the following indexes:
 
 * [0, 1, ... , batch\_size - 1]
 * [batch\_size, batch\_size + 1, ..., 2*batch\_size - 1]
@@ -15,27 +20,108 @@ The training and validation sets are built with the `sampler_t` class. During tr
 
 ## Convolutional neural network model
 
-The model `allcnn` is a convolutional neural network. The network is built by blocks of the following layers: 2D-CNNs, batch normalization, and relu layers. Below we list how the dimensions of the network evolve:
+The model `allcnn` (1,667,166 trainable parameters) is a convolutional neural network. The network is built by blocks of the following layers: 2D-CNNs, batch normalization, and relu layers. Below we list how the dimensions of the network evolve:
 
-**NOTE:** Add a visual diagram here.
+**TODO:** Add a visual diagram here.
 
-```
-    (N, 03, 32, 32) -> (N, 96, 32, 32) -> (N, 96, 32, 32) ->
-->  (N, 96, 16, 16) -> (N, 96, 16, 16) -> (N, 192, 16, 16) ->
-->  (N, 192, 16, 16) -> (N, 192, 08, 08) -> (N, 192, 08, 08) ->
-->  (N, 192, 08, 08) -> (N, 192, 08, 08) -> (N, 10, 08, 08) -> 
-->  (N, 10, 01, 01)
-```
+|Layer (type) |              Output Shape    |    Param #|
+| --- | --- | --- |
+|   Dropout-1     |       [-1, 3, 32, 32]        |       0|
+| Conv2d-2    |       [-1, 96, 32, 32]     |      2,688|
+|  BatchNorm2d-3      |     [-1, 96, 32, 32]    |         192|
+|     ReLU-4      |     [-1, 96, 32, 32]     |          0|
+|  Conv2d-5       |    [-1, 96, 32, 32]      |    83,040|
+|  BatchNorm2d-6   |        [-1, 96, 32, 32]    |         192|
+|     ReLU-7        |   [-1, 96, 32, 32]       |        0|
+|   Conv2d-8   |        [-1, 96, 16, 16]       |   83,040|
+| BatchNorm2d-9    |       [-1, 96, 16, 16]         |    192|
+|    ReLU-10     |      [-1, 96, 16, 16]       |        0|
+|   Dropout-11   |        [-1, 96, 16, 16]   |            0|
+|   Conv2d-12       |   [-1, 192, 16, 16] |        166,080|
+|BatchNorm2d-13   |       [-1, 192, 16, 16]     |        384|
+|    ReLU-14   |       [-1, 192, 16, 16]  |             0|
+|   Conv2d-15     |     [-1, 192, 16, 16] |        331,968|
+|  BatchNorm2d-16       |   [-1, 192, 16, 16]    |         384|
+|    ReLU-17       |   [-1, 192, 16, 16]  |             0|
+|  Conv2d-18      |      [-1, 192, 8, 8]    |     331,968|
+|    BatchNorm2d-19    |        [-1, 192, 8, 8]     |        384|
+|     ReLU-20   |         [-1, 192, 8, 8]          |     0|
+|   Dropout-21     |       [-1, 192, 8, 8]        |       0|
+|    Conv2d-22     |       [-1, 192, 8, 8]         |331,968|
+|    BatchNorm2d-23   |         [-1, 192, 8, 8]    |         384|
+|          ReLU-24       |     [-1, 192, 8, 8]    |           0|
+|      Conv2d-25     |       [-1, 192, 8, 8]      |   331,968|
+| BatchNorm2d-26        |    [-1, 192, 8, 8]  |           384|
+|        ReLU-27     |       [-1, 192, 8, 8]         |      0|
+|   Conv2d-28           |  [-1, 10, 8, 8]     |      1,930|
+|   BatchNorm2d-29       |      [-1, 10, 8, 8]      |        20|
+|     ReLU-30     |        [-1, 10, 8, 8]     |          0|
+| AvgPool2d-31     |        [-1, 10, 1, 1]          |     0|
+|    View-32      |             [-1, 10]            |   0|
 
 The loss function used to train the network is the [cross entropy loss function](https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html).
 
-### Experiments documentation
+## Experiments
 
-`final-experiments.sh`: Experiment to reproduce the paper. "We train for 200 epochs with SGD and Nesterov’s momentum during which the initial learning rate of 0.1 decreases by a factor of 5 after every 60 epochs."
+`test.sh`: Experiment to test L=0 and L>0 behaviour.
+
+`langevin.sh`: Variation of langevin and gamma for the analysis of the test errors. Afterwards, the goal is to make the analysis of the complexity measure on critical points.
+
+- L x epochs is fixed in 400, and L has the following values: [0, 10, 20, 40, 50, 100, 200].
+- Gamma varies in the range (3e-5, 3) in multiples of 10.
+- Learning rate is fixed.
+- Gamma is fixed.
+
+| L| E | Gamma |
+| - | - | - | 
+| 0 | 400| 3e-5|
+|10 | 40 | 3e-5 |
+|20 | 20 | 3e-5|
+|40 | 10 | 3e-5 |
+|50 | 8 | 3e-5|
+|100 | 4| 3e-5|
+|200 | 2| 3e-5|
+| 0 | 400| 3e-4|
+|10 | 40 | 3e-4 |
+|20 | 20 | 3e-4|
+|40 | 10 | 3e-4 |
+|50 | 8 | 3e-4|
+|100 |4| 3e-4|
+|200 |2| 3e-4|
+| 0 | 400| 3e-3|
+|10 | 40 | 3e-3 |
+|20 | 20 | 3e-3|
+|40 | 10 | 3e-3 |
+|50 | 8 | 3e-3|
+|100 |4| 3e-3|
+|200 |2| 3e-3|
+| 0 | 400| 3e-2|
+|10 | 40 | 3e-2 |
+|20 | 20 | 3e-2|
+|40 | 10 | 3e-2|
+|50 | 8 | 3e-2|
+|100 |4| 3e-2|
+|200 |2| 3e-2|
+| 0 | 400| 3e-1|
+|10 | 40 | 3e-1 |
+|20 | 20 | 3e-1|
+|40 | 10 | 3e-1 |
+|50 | 8 | 3e-1|
+|100 |4| 3e-1|
+|200 |2| 3e-1|
+| 0 | 400| 3|
+|10 | 40 | 3 |
+|20 | 20 | 3|
+|40 | 10 | 3 |
+|50 | 8 | 3|
+|100 |4| 3|
+|200 |2| 3|
+
+`gamma.sh`: Application of gamma scoping on most promising results. Learning rate annealing will be also considered.
+
+`reproduction.sh`: Experiments to reproduce the paper. "We train for 200 epochs with SGD and Nesterov’s momentum during which the initial learning rate of 0.1 decreases by a factor of 5 after every 60 epochs."
 
 "We train Entropy-SGD with L = 20 for 10 epochs with the original dropout of 0.5. The initial learning rate of the outer loop is set to 1 and drops by a factor of 5 every 4 epochs, while the learning rate of the SGLD updates is fixed to 0.1 with thermal noise 10−4. As the scoping scheme, we set the initial value of the scope to gamma=0.03 which increases by a factor of 1.001 after each parameter update."
-
-The only information being ignored is the initial dropout of 0.5. We are using the fixed `allcnn` network with initial dropout of 0.2.
 
 **SGD**: 
 - 200 epochs;
@@ -52,48 +138,5 @@ The only information being ignored is the initial dropout of 0.5. We are using t
 - Noise is set to 0.0001;
 - Gamma starts as 0.03 and increases by a factor of 1.001 at every parameter step;
 - Alpha parameter that weights the expected \mu value is set to 0.75 (beta1=0.25);
-- Network is fixed as allcnn. Initial dropout is 0.2;
+- Initial dropout is 0.5;
 - Complexity measure is calculated in all epochs;
-
-`exp_reproduce_nomeasure.sh`: Same experiments from `final-experiments.sh` but with no calculation of the complexity measures. The goal is to identify that indeed the complexity measure does not affect the training process. It is a sanity check.
-- Initially, we noticed higher losses after calculating the complexity measure. Please, check the experiment `L=0_B=200_s51_nomeasure` and compare with `L=0_B=200_s51`.
-- Solution: make a deepcopy before starting the calculus of the complexity measure, and assign the copy to a varible with new name. Variable model was replaced by measure_model, and init_model by measure_init_model.
-
-`gamma_experiments.sh`: Variation of gamma for the analysis of the flatness measures. Given the reproduction experiment where gamma is scoped as `0.03(1.001)^t`, two types of experiments are executed for the analysis of the flatness measures: experiments with the same scoping strategy, but varying the gamma starting value, and experiments without scoping, but also varying the gamma value from 3e-5 to 3. 
-
-Besides that, we also noticed that gamma scoping may affect the learning rate annealing for larger values of gamma. In this sense, some experiments were also conducted without learning rate annealing (gamma=3e-1, and gamma=3).
-
-Please, find the details on the table below:
-
-| Initial gamma| Scoping| LR decay|
-| - | - | - |
-|3e-5 | :white_check_mark:| :white_check_mark:|
-|3e-4 | :white_check_mark:| :white_check_mark:|
-|3e-3 |:white_check_mark: | :white_check_mark:|
-|3e-1 |:white_check_mark: |:white_check_mark:|
-|3e-1 |:white_check_mark: | :x:|
-|3 | :white_check_mark:| :white_check_mark:| 
-|3 | :white_check_mark:| :x:| 
-|3e-5 | :x:| :white_check_mark:|
-|3e-4 |:x: | :white_check_mark:|
-|3e-3 | :x:|:white_check_mark: |
-| 3e-2|:x: |:white_check_mark: |
-| 3e-1| :x:| :white_check_mark:|
-| 3| :x:| :white_check_mark:|
-
-Accordying to the definition of the modified Gibbs distribution, for small values of gamma, the modified distribution gets closer to the original one. As a consequence, it is expected that for a small value of gamma, the behaviour of the optimization for L=2 is more similar to the behaviour of L=0.
-
-`langevin-experiments.sh`: Variation of langevin for the analysis of the flatness measures. Given the reproduciton parameters provided on `final-experiments.sh`, we add variations for L to keep the same number of epochs (200), and also to keep the same step on the learning rate update (80 L x epochs). Number 80 was defined on the experiment with L=20, E=10 and step=4. 
-
-| L| E| step|
-| - | - | - |
-|2 | 100| 40 |
-|4| 50| 20|
-|5 |40 | 16 |
-| 8| 25| 10|
-|10 |20 | 8|
-|40 | 5 | 2| 
-
-`final-experiments-seed_variation`: Repeat the `final-experiments.sh` with different seeds for comparison.
-
-Note: added remaining experiments to grouping_experiments.sh file just to be more efficient (remove this note later).
