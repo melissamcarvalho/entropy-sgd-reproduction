@@ -5,11 +5,13 @@
   - [Environment setup](#environment-setup)
     - [Build the container docker](#build-the-container-docker)
     - [Run the container docker](#run-the-container-docker)
-  - [Steps to be executed inside the container docker](#steps-to-be-executed-inside-the-container-docker)
+  - [Pipeline](#pipeline)
     - [Data preprocessing](#data-preprocessing)
     - [Training the model](#training-the-model)
     - [Plotting the results](#plotting-the-results)
-  - [Quick reminders](#quick-reminders)
+  - [Notes](#notes)
+    - [Notes on cuda update](#notes-on-cuda-update)
+    - [Notes on docker restart](#notes-on-docker-restart)
 
 ## Objectives
 
@@ -38,7 +40,7 @@ docker build -t reproduction:0.1.0 .
 docker run -it --rm -v $PWD/:/entropy-reproduction/ --gpus=all --name="cifar_reproduction" -p 8888:8888 --ipc="host" reproduction:0.1.0
 ```
 
-## Steps to be executed inside the container docker
+## Pipeline
 
 ### Data preprocessing
 
@@ -66,45 +68,50 @@ Results are going to be saved at `proc`.
 ```
 cd entropy-sgd
 python train.py \
-        -B 1 \
-        -exp-tag initial_test_one_epoch_allcnn \
-        -wandb-mode disabled \
-        -m allcnn \
-        -b 128 \
-        -eval-b 1000 \
-        --lr 0.1 \
-        --l2 0 \
-        -L 0 \
-        --gamma 0 \
-        --scoping 0 \
-        --noise 0 \
+        -B 10 \
+        -exp-tag test_entropy \
+        -wandb-mode online \
+        -b 100 \
+        -eval-b 100 \
+        -lr 1 \
+        -l2 0 \
+        -L 20 \
         -g 0 \
-        -s 51 \
-        -epoch-step 100 \
-        -batch-step 100
+        -s 42 \
+        -epoch-step 1 \
+        -batch-step 100 \
+        -lr-step 4 \
+        -lr-decay 0.2 \
+        -gamma 0.03 \
+        -scoping 0.001 \
+        -noise 0.0001 \
+        -nesterov \
+        -momentum 0.9 \
+        -apply-scoping \
+        -deterministic
 ```
 
 ```
-usage: train.py [-h] [-m M] [-b B] [-eval-b EVAL_B] [-B B] [--lr LR] [--l2 L2]
-                [-L L] [--gamma GAMMA] [--scoping SCOPING] [--noise NOISE]
-                [-g G] [-s S] [-epoch-step EPOCH_STEP]
-                [-batch-step BATCH_STEP] [-exp-tag EXP_TAG]
-                [-wandb-mode WANDB_MODE]
+usage: train.py [-h] [-b B] [-eval-b EVAL_B] [-B B] [-lr LR] [-l2 L2] [-L L]
+                [-gamma GAMMA] [-scoping SCOPING] [-noise NOISE] [-g G] [-s S]
+                [-epoch-step EPOCH_STEP] [-batch-step BATCH_STEP]
+                [-exp-tag EXP_TAG] [-wandb-mode WANDB_MODE] [-lr-step LR_STEP]
+                [-lr-decay LR_DECAY] [-apply-scoping] [-nesterov]
+                [-momentum MOMENTUM] [-calculate] [-deterministic]
 
 PyTorch Entropy-SGD
 
 optional arguments:
   -h, --help            show this help message and exit
-  -m M                  mnistfc | mnistconv | allcnn
-  -b B                  Train batch size
-  -eval-b EVAL_B        Val, Test batch size
-  -B B                  Max epochs
-  --lr LR               Learning rate
-  --l2 L2               L2
-  -L L                  Langevin iterations
-  --gamma GAMMA         gamma
-  --scoping SCOPING     scoping
-  --noise NOISE         SGLD noise
+  -b B                  mini-batch for training and validation
+  -eval-b EVAL_B        mini-batch for complexity measures
+  -B B                  number of epochs
+  -lr LR                learning rate of outer loop
+  -l2 L2                L2
+  -L L                  langevin iterations
+  -gamma GAMMA          gamma
+  -scoping SCOPING      scoping
+  -noise NOISE          SGLD noise
   -g G                  GPU idx.
   -s S                  seed
   -epoch-step EPOCH_STEP
@@ -114,16 +121,23 @@ optional arguments:
   -exp-tag EXP_TAG      tag of the experiment
   -wandb-mode WANDB_MODE
                         mode of the wandb logger
+  -lr-step LR_STEP      step to apply learning rate decay
+  -lr-decay LR_DECAY    decay factor applied to the learning rate
+  -apply-scoping        whether or not the gamma scoping is applied
+  -nesterov             whether or not nesterov is applied
+  -momentum MOMENTUM    whether or not apply momentum on the optimizer
+  -calculate            whether or not calculate complexity measures
+  -deterministic        whether or not use deterministic mode in torch
 ```
 
 For debugging purposes, a script with a test experiment may be executed:
 
 ```bash
 cd entropy-sgd
-./test_metrics_experiment.sh
+./test.sh
 ```
 
-Training experiments and their associated scripts are listed on the [training notes](entropy-sgd/train_notes.md).
+Experiments and their associated scripts are listed on the [training notes](entropy-sgd/train_notes.md).
 
 ### Plotting the results
 
@@ -133,8 +147,14 @@ Plots were created with notebooks `notebooks/1_wandb_plots_cifar.ipynb`, and `no
 
 `jupyter notebook --ip 0.0.0.0 --no-browser --port $PORT --allow-root`
 
-## Quick reminders
+## Notes
 
-`sudo systemctl daemon-reload`
+### Notes on cuda update
 
-`sudo systemctl restart docker`
+- [Reference](https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=18.04&target_type=deb_local)
+- [GPG error fix](https://github.com/NVIDIA/nvidia-docker/issues/1632)
+
+### Notes on docker restart
+
+- `sudo systemctl daemon-reload`
+- `sudo systemctl restart docker`
