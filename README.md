@@ -8,7 +8,8 @@
   - [Pipeline](#pipeline)
     - [Data preprocessing](#data-preprocessing)
     - [Training the model](#training-the-model)
-    - [Plotting the results](#plotting-the-results)
+    - [Results](#results)
+    - [Additional results offline](#additional-results-offline)
   - [Notes](#notes)
     - [Notes on cuda update](#notes-on-cuda-update)
     - [Notes on docker restart](#notes-on-docker-restart)
@@ -142,7 +143,11 @@ experiments/test.sh
 
 Experiments and their associated scripts are listed on the [training notes](entropy-sgd/train_notes.md).
 
-### Plotting the results
+### Results
+
+Reports and experiments are documented with [Weights & Biases](https://docs.wandb.ai/). Please, check [this link](https://wandb.ai/mmcmelissa/Entropy%20SGD%20Reproduction?workspace=user-mmcmelissa).
+
+### Additional results offline
 
 Data downloaded from Weights and Biases was saved at a specific folder (`WANDB_RESULTS`).
 
