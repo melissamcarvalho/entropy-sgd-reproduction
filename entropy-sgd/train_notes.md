@@ -63,7 +63,7 @@ The loss function used to train the network is the [cross entropy loss function]
 
 ## Experiments
 
-`test.sh`: Experiment to test L=0 and L>0 behaviour.
+`test.sh`: Experiment to test L=0 and L>0 behaviour, and the capability of two distinct runs with the same patameters generate similar results (reproducibility analysis).
 
 `langevin.sh`: Variation of langevin and gamma for the analysis of the test errors. Afterwards, the goal is to make the analysis of the complexity measure on critical points.
 
