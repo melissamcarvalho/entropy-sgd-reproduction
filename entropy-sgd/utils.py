@@ -1,5 +1,3 @@
-
-
 class AverageMeter(object):
     """Computes and stores the average and current value"""
     def __init__(self):
@@ -49,6 +47,7 @@ def accuracy(output, target, topk=(1,)):
 
     _, pred = output.topk(maxk, 1, True, True)  # dimension (batch, maxk)
     pred = pred.t()
+    # Boolean array
     correct = pred.eq(target.view(1, -1).expand_as(pred))
 
     res = []
@@ -62,11 +61,9 @@ def accuracy(output, target, topk=(1,)):
 def check_models(model1, model2):
     """
     Compares two pytorch models
-
     Args:
         model1 (nn.Module): base model.
         model2 (nn.Module): model to be compared.
-
     Returns:
         (bool): True, if models have the same parameters.
     """
