@@ -15,10 +15,10 @@ def num_parameters(model):
 
 
 class allcnn(nn.Module):
-    def __init__(self, opt={'d': 0.5}, c1=96, c2=192):
+    def __init__(self, opt={'dropout': 0.5}, c1=96, c2=192):
         super(allcnn, self).__init__()
         self.name = 'allcnn'
-        opt['d'] = 0.5
+        self.p = opt['dropout']
 
         def convbn(ci, co, ksz, s=1, pz=0):
             return nn.Sequential(
@@ -27,15 +27,15 @@ class allcnn(nn.Module):
                 nn.ReLU(True))
 
         self.m = nn.Sequential(
-            nn.Dropout(0.2),            # (N, 03, 32, 32)
+            nn.Dropout(self.p),            # (N, 03, 32, 32)
             convbn(3, c1, 3, 1, 1),     # (N, 96, 32, 32)
             convbn(c1, c1, 3, 1, 1),    # (N, 96, 32, 32)
             convbn(c1, c1, 3, 2, 1),    # (N, 96, 16, 16)
-            nn.Dropout(opt['d']),       # (N, 96, 16, 16)
+            nn.Dropout(0.5),       # (N, 96, 16, 16)
             convbn(c1, c2, 3, 1, 1),    # (N, 192, 16, 16)
             convbn(c2, c2, 3, 1, 1),    # (N, 192, 16, 16)
             convbn(c2, c2, 3, 2, 1),    # (N, 192, 08, 08)
-            nn.Dropout(opt['d']),       # (N, 192, 08, 08)
+            nn.Dropout(0.5),       # (N, 192, 08, 08)
             convbn(c2, c2, 3, 1, 1),    # (N, 192, 08, 08)
             convbn(c2, c2, 3, 1, 1),    # (N, 192, 08, 08)
             convbn(c2, 10, 1, 1),       # (N, 10, 08, 08)

@@ -16,7 +16,6 @@ from utils import AverageMeter, accuracy
 from measures import calculate_flatness_measures
 from experiment_config import EvaluationMetrics, DatasetSubsetType
 from logger import WandbLogger
-from utils import check_models
 
 # Keeping the code as similar as the original one due to reproduction purpose.
 # Added the evaluation of the complexity measures.
@@ -52,6 +51,8 @@ ap('-calculate', help='whether or not calculate complexity measures',
     action='store_true')
 ap('-deterministic', help='whether or not use deterministic mode in torch',
     action='store_true')
+ap('-dropout', help='probability of the first dropout layer at allcnn model',
+    type=float, default=0.2)
 
 opt = vars(parser.parse_args())
 
@@ -118,7 +119,6 @@ logger = WandbLogger(opt['exp_tag'], hps=opt, mode=opt['wandb_mode'])
 # Set cuda events for time analysis
 start = th.cuda.Event(enable_timing=True)
 end = th.cuda.Event(enable_timing=True)
-
 
 # Reference: https://github.com/nitarshan/robust-generalization-measures
 @th.no_grad()

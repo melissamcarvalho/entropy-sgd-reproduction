@@ -19,7 +19,8 @@ python train.py \
         -nesterov \
         -momentum 0.9 \
         -apply-scoping \
-        -deterministic
+        -deterministic \
+        -dropout 0.5
     
 python train.py \
         -B 200 \

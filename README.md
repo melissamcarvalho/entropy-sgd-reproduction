@@ -88,7 +88,8 @@ python train.py \
         -nesterov \
         -momentum 0.9 \
         -apply-scoping \
-        -deterministic
+        -deterministic \
+        -dropout 0.5
 ```
 
 ```
@@ -98,6 +99,7 @@ usage: train.py [-h] [-b B] [-eval-b EVAL_B] [-B B] [-lr LR] [-l2 L2] [-L L]
                 [-exp-tag EXP_TAG] [-wandb-mode WANDB_MODE] [-lr-step LR_STEP]
                 [-lr-decay LR_DECAY] [-apply-scoping] [-nesterov]
                 [-momentum MOMENTUM] [-calculate] [-deterministic]
+                [-dropout DROPOUT]
 
 PyTorch Entropy-SGD
 
@@ -128,13 +130,14 @@ optional arguments:
   -momentum MOMENTUM    whether or not apply momentum on the optimizer
   -calculate            whether or not calculate complexity measures
   -deterministic        whether or not use deterministic mode in torch
+  -dropout DROPOUT      probability of the first dropout layer at allcnn model
 ```
 
 For debugging purposes, a script with a test experiment may be executed:
 
 ```bash
 cd entropy-sgd
-./test.sh
+experiments/test.sh
 ```
 
 Experiments and their associated scripts are listed on the [training notes](entropy-sgd/train_notes.md).
