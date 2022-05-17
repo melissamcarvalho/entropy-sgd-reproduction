@@ -1,5 +1,4 @@
 import torch.nn as nn
-from torch import Tensor
 
 
 class View(nn.Module):
@@ -13,7 +12,6 @@ class View(nn.Module):
 
 def num_parameters(model):
     return sum([w.numel() for w in model.parameters()])
-
 
 
 class allcnn(nn.Module):
