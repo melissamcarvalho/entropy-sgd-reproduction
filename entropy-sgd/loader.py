@@ -1,7 +1,6 @@
 import torch as th
 import torch.utils.data
 import numpy as np
-from torchvision import datasets
 
 
 class sampler_t:
@@ -55,30 +54,6 @@ class sampler_t:
 
     def __iter__(self):
         return self
-
-
-def mnist(opt):
-    """
-    Defines the data loader for MNIST.
-
-    Args:
-        opt (dict): Dictionary with data parameters.
-                    b = batch size.
-
-    Returns:
-        train (sampler_t): Loader for the training set.
-        val (sampler_t): Loader for the validation set.
-    """
-    d1 = datasets.MNIST('../proc', download=True, train=True)
-    d2 = datasets.MNIST('../proc', train=False)
-
-    train = sampler_t(opt['b'],
-                      d1.train_data.view(-1, 1, 28, 28).float(),
-                      d1.train_labels)
-    val = sampler_t(opt['b'],
-                    d2.test_data.view(-1, 1, 28, 28).float(),
-                    d2.test_labels, train=False)
-    return train, val, val
 
 
 def cifar10(opt):
