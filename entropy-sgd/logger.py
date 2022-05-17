@@ -15,23 +15,16 @@ class BaseLogger:
     def log_metrics(self, step: int, metrics: Dict[str, float]):
         raise NotImplementedError()
 
-    def log_generalization_gap(self,
-                               epoch: int,
-                               train_acc: float,
-                               val_acc: float,
-                               train_loss: float,
-                               val_loss: float,
-                               all_complexities:
-                                   Dict[ComplexityType, float]) -> None:
+    def log_complexity_measures(self,
+                                epoch: int,
+                                all_complexities:
+                                Dict[ComplexityType, float]) -> None:
         """
-        Logs differences between training and validation sets, and
-        the result for the complexity measures over the training set.
+        Logs the complexity measures over the training set.
         """
         self.log_metrics(
             epoch,
             {
-                'generalization/error': train_acc - val_acc,
-                'generalization/loss': val_loss - train_loss,
                 **{'complexity/{}'.format(k.name):
                     v for k, v in all_complexities.items()}
             })
@@ -93,14 +86,14 @@ class BaseLogger:
                 'optim/nesterov': nesterov
             })
 
-    def log_lr(self, epoch: int, datasubset: DatasetSubsetType, lr: float):
+    def log_lr(self, epoch: int, lr: float):
         """
         Logs learning rate by the end of the epoch.
         """
         self.log_metrics(
             epoch,
             {
-                'optim/learning_rate_{}'.format(datasubset.name.lower()): lr,
+                'optim/learning_rate': lr,
             })
 
     def log_time(self, epoch: int, time: float):
@@ -111,16 +104,6 @@ class BaseLogger:
             epoch,
             {
                 'time/training_time': time,
-            })
-
-    def log_stop_criteria(self, epoch: int, criteria: int):
-        """
-        Logs if the stop criteria was reached at the end of the epoch.
-        """
-        self.log_metrics(
-            epoch,
-            {
-                'stop_criteria/reach_minimum_loss': criteria,
             })
 
     def log_batch_correctness(self,
