@@ -22,7 +22,7 @@ The training and validation sets are built with the `sampler_t` class. During tr
 
 The model `allcnn` (1,667,166 trainable parameters) is a convolutional neural network. The network is built by blocks of the following layers: 2D-CNNs, batch normalization, and relu layers. Below we list how the dimensions of the network evolve:
 
-**TODO:** Add a visual diagram here.
+**TODO:** Add a visual diagram here based on [this repository](https://github.com/HarisIqbal88/PlotNeuralNet/blob/master/pycore/tikzeng.py).
 
 |Layer (type) |              Output Shape    |    Param #|
 | --- | --- | --- |
@@ -117,7 +117,26 @@ The loss function used to train the network is the [cross entropy loss function]
 |100 |4| 3|
 |200 |2| 3|
 
-`gamma.sh`: Application of gamma scoping on most promising results. Learning rate annealing will be also considered.
+`gamma.sh`: Application of gamma scoping and learning rate decay on most promising results from `langevin.sh`. The fixed gamma with minimum validation error was gamma=3 with L=10, and L=20. In this sense, the following experiments are considered:
+
+| L| LR | LR decay |Gamma | scoping | value | result |
+| - | - | - | - | - | - | - |  
+| 20 | 0.1| :x:| 3| :check: | 1e-5| |
+| 10 | 0.1 | :x: | 3| :check:| 1e-5|  |
+| 20 | 0.1| :x:| 3| :check: | 1e-4|  |
+| 10 | 0.1 | :x: | 3| :check:| 1e-4| |
+| 20 | 0.1| :check:| 3| :x: | 0.2| |
+| 10 | 0.1 | :check: | 3| :x:| 0.2 | |
+
+Gamma scoping value was selected considering the total number of optimization steps which defines the maximum gamma reached. 
+
+|L | scoping factor| Maximum |
+| - | -| - | 
+| 10| 3*(1.00001)^(500*40) | 3.66 | 
+| 20| 3*(1.00001)^(500*20)| 3.32|
+| 10 |3*(1.0001)^(500*40) | 22.16|
+| 20| 3*(1.0001)^(500*20) | 8.15 | 
+ 
 
 `reproduction.sh`: Experiments to reproduce the paper. "We train for 200 epochs with SGD and Nesterov’s momentum during which the initial learning rate of 0.1 decreases by a factor of 5 after every 60 epochs."
 

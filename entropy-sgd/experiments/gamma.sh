@@ -1,1 +1,135 @@
-TBD
+python train.py \
+        -B 20 \
+        -exp-tag langevin_20_20_p0_scoping \
+        -wandb-mode online \
+        -b 100 \
+        -eval-b 100 \
+        -lr 0.1 \
+        -l2 0 \
+        -L 20 \
+        -g 0 \
+        -s 40 \
+        -epoch-step 10 \
+        -batch-step 100 \
+        -lr-step 1000 \
+        -lr-decay 0.2 \
+        -gamma 3 \
+        -scoping 0.00001 \
+        -apply-scoping \
+        -noise 0.0001 \
+        -nesterov \
+        -momentum 0.9 \
+        -deterministic
+
+python train.py \
+        -B 40 \
+        -exp-tag langevin_10_40_p0_scoping \
+        -wandb-mode online \
+        -b 100 \
+        -eval-b 100 \
+        -lr 0.1 \
+        -l2 0 \
+        -L 10 \
+        -g 0 \
+        -s 40 \
+        -epoch-step 10 \
+        -batch-step 100 \
+        -lr-step 1000 \
+        -lr-decay 0.2 \
+        -gamma 3 \
+        -scoping 0.00001 \
+        -apply-scoping \
+        -noise 0.0001 \
+        -nesterov \
+        -momentum 0.9 \
+        -deterministic
+    
+python train.py \
+        -B 20 \
+        -exp-tag langevin_20_20_p0_scoping_2 \
+        -wandb-mode online \
+        -b 100 \
+        -eval-b 100 \
+        -lr 0.1 \
+        -l2 0 \
+        -L 20 \
+        -g 0 \
+        -s 40 \
+        -epoch-step 10 \
+        -batch-step 100 \
+        -lr-step 1000 \
+        -lr-decay 0.2 \
+        -gamma 3 \
+        -scoping 0.0001 \
+        -apply-scoping \
+        -noise 0.0001 \
+        -nesterov \
+        -momentum 0.9 \
+        -deterministic
+
+python train.py \
+        -B 40 \
+        -exp-tag langevin_10_40_p0_scoping_2 \
+        -wandb-mode online \
+        -b 100 \
+        -eval-b 100 \
+        -lr 0.1 \
+        -l2 0 \
+        -L 10 \
+        -g 0 \
+        -s 40 \
+        -epoch-step 10 \
+        -batch-step 100 \
+        -lr-step 1000 \
+        -lr-decay 0.2 \
+        -gamma 3 \
+        -scoping 0.0001 \
+        -apply-scoping \
+        -noise 0.0001 \
+        -nesterov \
+        -momentum 0.9 \
+        -deterministic
+
+python train.py \
+        -B 20 \
+        -exp-tag langevin_20_20_p0_lrdecay \
+        -wandb-mode online \
+        -b 100 \
+        -eval-b 100 \
+        -lr 0.1 \
+        -l2 0 \
+        -L 20 \
+        -g 0 \
+        -s 40 \
+        -epoch-step 8 \
+        -batch-step 100 \
+        -lr-step 5 \
+        -lr-decay 0.2 \
+        -gamma 3 \
+        -scoping 0.0001 \
+        -noise 0.0001 \
+        -nesterov \
+        -momentum 0.9 \
+        -deterministic
+
+python train.py \
+        -B 40 \
+        -exp-tag langevin_10_40_p0_lrdecay \
+        -wandb-mode online \
+        -b 100 \
+        -eval-b 100 \
+        -lr 0.1 \
+        -l2 0 \
+        -L 10 \
+        -g 0 \
+        -s 40 \
+        -epoch-step 10 \
+        -batch-step 100 \
+        -lr-step 16 \
+        -lr-decay 0.2 \
+        -gamma 3 \
+        -scoping 0.0001 \
+        -noise 0.0001 \
+        -nesterov \
+        -momentum 0.9 \
+        -deterministic
