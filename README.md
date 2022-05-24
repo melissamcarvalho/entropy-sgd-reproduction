@@ -18,14 +18,17 @@
 
 The reproduction of the paper [Entropy-SGD: Biasing Gradient Descent Into Wide Valleys](https://arxiv.org/abs/1611.01838) had the following goals:
 
-1. Reproduce experiments for training the CIFAR-10 dataset. A CNN-based model [allcnn](entropy-sgd/models.py) was trained with Entropy-SGD for $L = 0$ (vanilla SGD) and $L > 0$.
-2. Evaluate six complexity measures adapted from [this repository](https://github.com/nitarshan/robust-generalization-measures/blob/master/data/generation/measures.py): 
-   * pacbayes-init
-   * pacbayes-orig
+1. Evaluate the performance of Entropy-SGD on a benchmark dataset (e.g., classification with CIFAR-10 dataset). A CNN-based model [ALL-CNN-C](entropy-sgd/models.py) was trained with Entropy-SGD for $L = 0$ (vanilla SGD) and $L > 0$. The model was defined by [Springenberg et al., 2014](https://arxiv.org/pdf/1412.6806.pdf).
+2. Evaluate Entropy-SGD result with flatness-based complexity measures adapted from [this repository](https://github.com/nitarshan/robust-generalization-measures/blob/master/data/generation/measures.py) and defined by [Jiang et al, 2019](https://arxiv.org/pdf/1912.02178.pdf): 
    * pacbayes-flatness
-   * pacbayes-mag-init
-   * pacbayes-mag-orig
    * pacbayes-mag-flatness.
+
+    Table below list the Kendall’s Rank-Correlation Coefficient on CIFAR-10 dataset obtained by Jiang et al, 2019 (Table 5).
+
+    | Measure | Index on the paper |Kendall's rank correlation coefficient |
+    | - |  - | - |
+    | Pacbayes flatness| 53| 0.303 |
+    | Pacbayes mag flatness| 61| 0.365|
 
 ## Environment setup
 
@@ -75,7 +78,7 @@ python train.py \
         -b 100 \
         -eval-b 100 \
         -lr 1 \
-        -l2 0 \
+        -weight-decay 0 \
         -L 20 \
         -g 0 \
         -s 42 \
@@ -94,7 +97,8 @@ python train.py \
 ```
 
 ```
-usage: train.py [-h] [-b B] [-eval-b EVAL_B] [-B B] [-lr LR] [-l2 L2] [-L L]
+usage: train.py [-h] [-b B] [-eval-b EVAL_B] [-B B] [-lr LR]
+                [-weight-decay WEIGHT_DECAY] [-damp DAMP] [-L L]
                 [-gamma GAMMA] [-scoping SCOPING] [-noise NOISE] [-g G] [-s S]
                 [-epoch-step EPOCH_STEP] [-batch-step BATCH_STEP]
                 [-exp-tag EXP_TAG] [-wandb-mode WANDB_MODE] [-lr-step LR_STEP]
@@ -110,7 +114,9 @@ optional arguments:
   -eval-b EVAL_B        mini-batch for complexity measures
   -B B                  number of epochs
   -lr LR                learning rate of outer loop
-  -l2 L2                L2
+  -weight-decay WEIGHT_DECAY
+                        weight decay
+  -damp DAMP            momentum factor, 1 - damp, please check the optimizer.
   -L L                  langevin iterations
   -gamma GAMMA          gamma
   -scoping SCOPING      scoping
