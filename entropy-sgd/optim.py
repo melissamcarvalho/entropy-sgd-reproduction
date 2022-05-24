@@ -6,13 +6,6 @@ import numpy as np
 class EntropySGD(Optimizer):
     def __init__(self, params, config={}):
 
-        defaults = dict(lr=0.01, momentum=0, damp=0, weight_decay=0,
-                        nesterov=True, L=0, eps=1e-4, g0=1e-2, g1=0)
-
-        for k in defaults:
-            if config.get(k, None) is None:
-                config[k] = defaults[k]
-
         super(EntropySGD, self).__init__(params, config)
         self.config = config
 
@@ -26,7 +19,7 @@ class EntropySGD(Optimizer):
 
         # Parameters of the optimizer
         c = self.config
-        lr = c['lr']
+        lr = self.param_groups[0]['lr']
         mom = c['momentum']
         wd = c['weight_decay']
         damp = c['damp']
