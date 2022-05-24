@@ -153,19 +153,17 @@ Gamma scoping value was selected considering the total number of optimization st
 "We train Entropy-SGD with L = 20 for 10 epochs with the original dropout of 0.5. The initial learning rate of the outer loop is set to 1 and drops by a factor of 5 every 4 epochs, while the learning rate of the SGLD updates is fixed to 0.1 with thermal noise 10−4. As the scoping scheme, we set the initial value of the scope to gamma=0.03 which increases by a factor of 1.001 after each parameter update."
 
 **SGD**: 
-- 200 epochs;
-- Optimizer step is performed with nesterov and momentum=0.9;
+- 400 epochs;
+- Optimizer step is performed with nesterov,momentum=0.9, and weight decay=0.001;
 - Learning rate starts with 0.1 and drops 0.2 every 60 epochs;
 - Network is fixed as allcnn. Initial dropout is 0.2;
-- Complexity measure is calculated every 20 epochs or if the minimum learning rate is reached;
 
 **Entropy SGD**:
-- 10 epochs with 20 inner loops
-- Optimizer step is performed with nesterov and momentum=0.9;
+- 20 epochs with 20 inner loops
+- Optimizer step is performed with nesterov, momentum=0.9, and weight decay=0.001;
 - Learning rate starts with 1 and drops 0.2 every 4 epochs;
 - Langevin learning rate is fixed in 0.1;
 - Noise is set to 0.0001;
 - Gamma starts as 0.03 and increases by a factor of 1.001 at every parameter step;
 - Alpha parameter that weights the expected \mu value is set to 0.75 (beta1=0.25);
-- Initial dropout is 0.5;
-- Complexity measure is calculated in all epochs;
+- Initial dropout is 0.2;
