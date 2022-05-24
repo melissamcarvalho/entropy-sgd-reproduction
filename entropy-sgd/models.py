@@ -15,7 +15,7 @@ def num_parameters(model):
 
 
 class allcnn(nn.Module):
-    def __init__(self, opt={'dropout': 0.5}, c1=96, c2=192):
+    def __init__(self, opt, c1=96, c2=192):
         super(allcnn, self).__init__()
         self.name = 'allcnn'
         self.p = opt['dropout']
