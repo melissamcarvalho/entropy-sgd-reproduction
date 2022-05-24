@@ -72,7 +72,11 @@ class BaseLogger:
                          langevin_lr: float,
                          mean_weight: float,
                          momentum: float,
-                         nesterov: bool):
+                         weight_decay: float,
+                         noise: float,
+                         scoping: float,
+                         nesterov: int,
+                         damp: float):
         """
         Logs Entropy SGD inner parameters
         """
@@ -83,7 +87,11 @@ class BaseLogger:
                 'optim/langevin_learning_rate': langevin_lr,
                 'optim/alpha_mean_weight': mean_weight,
                 'optim/momentum': momentum,
-                'optim/nesterov': nesterov
+                'optim/weight_decay': weight_decay,
+                'optim/langevin_noise': noise,
+                'optim/scoping': scoping,
+                'optim/nesterov': nesterov,
+                'optim/damp': damp
             })
 
     def log_lr(self, epoch: int, lr: float):

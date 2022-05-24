@@ -291,7 +291,12 @@ def train(epoch, factor):
                             optimizer.langevin_lr,
                             optimizer.alpha,
                             optimizer.momentum,
-                            int(optimizer.nesterov))
+                            optimizer.weight_decay,
+                            optimizer.noise,
+                            optimizer.scoping,
+                            int(optimizer.nesterov),
+                            optimizer.damp,
+                            )
 
 
 def set_dropout(cache=None, p=0):
