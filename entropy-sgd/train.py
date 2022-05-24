@@ -290,12 +290,12 @@ def train(epoch, factor):
                             optimizer.gamma,
                             optimizer.langevin_lr,
                             optimizer.alpha,
-                            optimizer.momentum,
-                            optimizer.weight_decay,
-                            optimizer.noise,
-                            optimizer.scoping,
-                            int(optimizer.nesterov),
-                            optimizer.damp,
+                            optimizer.param_groups[0]['momentum'],
+                            optimizer.param_groups[0]['weight_decay'],
+                            optimizer.param_groups[0]['eps'],
+                            optimizer.param_groups[0]['g1'],
+                            int(optimizer.param_groups[0]['nesterov']),
+                            optimizer.param_groups[0]['damp'],
                             )
 
 

@@ -90,8 +90,6 @@ class EntropySGD(Optimizer):
         self.gamma = g
         self.langevin_lr = llr
         self.alpha = 1 - beta1
-        self.nesterov = nesterov
-        self.momentum = mom
 
         for i in range(L):
 
