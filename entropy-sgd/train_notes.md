@@ -59,6 +59,14 @@ The model `allcnn` (1,667,166 trainable parameters) is a convolutional neural ne
 | AvgPool2d-31     |        [-1, 10, 1, 1]          |     0|
 |    View-32      |             [-1, 10]            |   0|
 
+The model was designed by [Springenberg et al](https://arxiv.org/pdf/1412.6806.pdf). On this work, the network was trained with the following requirements:
+
+* Optimizer: Stochastic gradient descent with fixed momentum of 0.9;
+* Lr decay at epochs 200, 250, 300, and networks trained for 350 epochs;
+* Learning rate attempts: [0.25, 0.1, 0.05, 0.01];
+* Dropout: [0.2, 0.5, 0.5];
+* weight decay with lambda=0.001;
+
 The loss function used to train the network is the [cross entropy loss function](https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html).
 
 ## Experiments
@@ -136,6 +144,8 @@ Gamma scoping value was selected considering the total number of optimization st
 | 20| 3*(1.00001)^(500*20)| 3.32|
 | 10 |3*(1.0001)^(500*40) | 22.16|
 | 20| 3*(1.0001)^(500*20) | 8.15 | 
+
+`weight-decay.sh`: Analysis of the application of weight decay (TBD).
  
 
 `reproduction.sh`: Experiments to reproduce the paper. "We train for 200 epochs with SGD and Nesterov’s momentum during which the initial learning rate of 0.1 decreases by a factor of 5 after every 60 epochs."
