@@ -27,7 +27,9 @@ ap('-eval-b', help='mini-batch for complexity measures',
     type=int, default=5000)
 ap('-B', help='number of epochs', type=int, default=100)
 ap('-lr', help='learning rate of outer loop', type=float, default=0.1)
-ap('-l2', help='L2', type=float, default=0.0)
+ap('-weight-decay', help='weight decay', type=float, default=0.0)
+ap('-damp', help='momentum factor, 1 - damp, please check the optimizer.',
+    type=float, default=0.0)
 ap('-L', help='langevin iterations', type=int, default=0)
 ap('-gamma', help='gamma', type=float, default=1e-4)
 ap('-scoping', help='scoping', type=float, default=1e-3)
@@ -46,7 +48,7 @@ ap('-apply-scoping', action='store_true',
 ap('-nesterov', action='store_true',
     help='whether or not nesterov is applied')
 ap('-momentum', help='whether or not apply momentum on the optimizer',
-    type=float, default=0)
+    type=float, default=0.0)
 ap('-calculate', help='whether or not calculate complexity measures',
     action='store_true')
 ap('-deterministic', help='whether or not use deterministic mode in torch',
@@ -100,8 +102,9 @@ if opt['cuda']:
 optimizer = optim.EntropySGD(model.parameters(),
                              config=dict(lr=opt['lr'],
                                          momentum=opt['momentum'],
+                                         damp=opt['damp'],
+                                         weight_decay=opt['weight_decay'],
                                          nesterov=opt['nesterov'],
-                                         weight_decay=opt['l2'],
                                          L=opt['L'],
                                          eps=opt['noise'],
                                          g0=opt['gamma'],
